@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        flutter_channel: [ "stable", "beta" ]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: ${{ matrix.flutter_channel }}
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    # Analyze step needs different config for pull_request and push, so it is
+    # duplicated with if conditions to use the correct configuration for each
+    - name: Analyze (push)
+      if: ${{ github.event_name == 'push' }}
+      uses: kitek/dartanalyzer-annotations-action@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        check_name: test
+        commit_sha: ${{ github.sha }}
+    - name: Analyze (pull_request)
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: kitek/dartanalyzer-annotations-action@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        check_name: test
+        commit_sha: ${{ github.event.pull_request.head.sha }}
+
+    - name: Check format
+      run: flutter format -n --set-exit-if-changed lib test example
+
+    - name: Run unit tests
+      run: flutter test --coverage --coverage-path=coverage/unit.lcov.info
+
+    - name: Upload unit tests coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: coverage/unit.lcov.info
+        flags: unit,flutter-${{ matrix.flutter_channel }}
+
+# vim: set et sw=2 sts=2 :
