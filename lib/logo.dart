@@ -41,7 +41,7 @@ class Logo extends StatelessWidget {
 
     return AspectRatio(
       aspectRatio: 3,
-      child: Center(
+      child: Container(
         child: Column(
           children: <Widget>[
             Expanded(flex: 4, child: logo),
