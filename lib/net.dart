@@ -42,7 +42,7 @@ class NoClickService {
   }
 
   Future<String> createUrl(Uri url) async {
-    final response = await _client.post(_serverUrl,
+    final response = await _client.post('$_serverUrl/url',
         headers: {
           'Content-type': 'application/json',
         },
