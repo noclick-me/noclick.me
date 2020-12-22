@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'home.dart' show Home;
+import 'screenutil_builder.dart' show screenutilBuilder;
 
 class App extends StatelessWidget {
   const App({Key key}) : super(key: key);
@@ -11,15 +11,6 @@ class App extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: Builder(
-          builder: (context) {
-            ScreenUtil.init(
-              context,
-              designSize: Size(1080, 1920),
-              allowFontScaling: true,
-            );
-            return Home();
-          },
-        ),
+        home: screenutilBuilder(child: Home()),
       );
 }
