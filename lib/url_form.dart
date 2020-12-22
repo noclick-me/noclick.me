@@ -39,7 +39,7 @@ class _UrlFormState extends State<UrlForm> {
     super.dispose();
   }
 
-  bool get _isNarrow => 1.sw <= 500;
+  bool _isNarrow(BoxConstraints constraints) => constraints.maxWidth <= 500;
 
   /// Tries to fix and validate an URL.
   ///
@@ -158,31 +158,51 @@ class _UrlFormState extends State<UrlForm> {
       onEditingComplete: _submit,
     );
 
-    final children = <Widget>[
-      _isNarrow
-          ? Padding(
-              padding: EdgeInsets.only(bottom: 20.h),
-              child: _field,
-            )
-          : Expanded(
-              child: _field,
-            ),
-      _isNarrow
-          ? _button
-          : Padding(padding: EdgeInsets.only(left: 10.w), child: _button),
-    ];
-
-    return Form(
-      key: _formKey,
-      child: _isNarrow
-          ? Column(
-              mainAxisSize: MainAxisSize.max,
-              children: children,
-            )
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: children,
-            ),
+    return Container(
+      child: Form(
+        key: _formKey,
+        child: LayoutBuilder(
+          builder: (context, constraints) => _isNarrow(constraints)
+              ? _NarrowUrlForm(_field, _button)
+              : _WideUrlForm(_field, _button),
+        ),
+      ),
     );
   }
+}
+
+class _NarrowUrlForm extends StatelessWidget {
+  final Widget field;
+  final Widget button;
+  const _NarrowUrlForm(this.field, this.button);
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 20.h),
+            child: field,
+          ),
+          button,
+        ],
+      );
+}
+
+class _WideUrlForm extends StatelessWidget {
+  final Widget field;
+  final Widget button;
+  const _WideUrlForm(this.field, this.button);
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Expanded(
+            child: field,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10.w),
+            child: button,
+          ),
+        ],
+      );
 }
