@@ -14,10 +14,14 @@ class NoClickService {
 
   http.Client _client;
 
-  NoClickService({Uri serverUrl})
+  NoClickService({Uri serverUrl, http.Client client})
       : _serverUrl = serverUrl ??
             Uri.parse(const String.fromEnvironment(SERVER_URL_VAR_NAME,
                 defaultValue: SERVER_URL_DEFAULT)) {
+    if (client != null) {
+      _client = client;
+      return;
+    }
     // XXX: All this is a big hack to be able to connect to self-signed
     //      certificates (which opens the door to any other bad certificate, so
     //      this is really really a BAD THING (TM). It should only be enabled
