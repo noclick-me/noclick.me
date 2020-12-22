@@ -12,7 +12,11 @@ class NoClickService {
 
   final Uri _serverUrl;
 
+  Uri get serverUrl => _serverUrl;
+
   http.Client _client;
+
+  http.Client get httpClient => _client;
 
   NoClickService({Uri serverUrl, http.Client client})
       : _serverUrl = serverUrl ??
