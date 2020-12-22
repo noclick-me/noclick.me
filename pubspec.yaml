@@ -1,4 +1,4 @@
-name: app
+name: noclick_me
 description: Share links with more descriptive URLs!
 
 # Prevents the package from being accidentally published using `pub publish`.
