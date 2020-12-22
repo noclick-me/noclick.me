@@ -45,32 +45,36 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                topPadding,
-                SizedBox(
-                  width: min(400, 0.6.sw),
-                  child: const Logo(),
-                ),
-                Container(
-                  width: adapt(
-                    current: 1.sw,
-                    atMost: 980,
-                    smallerThan: 600,
-                    thenUse: 1.0,
-                    andUse: 0.8,
-                    ifBiggerThan: 800,
+        // TODO: Use a LayoutBuilder for each component that needs to adapt to
+        // the screen size instead of one for the whole widget.
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  topPadding,
+                  SizedBox(
+                    width: min(400, constraints.maxWidth),
+                    child: const Logo(),
                   ),
-                  padding: EdgeInsets.only(
-                    left: 0.01.sw,
-                    right: 0.01.sw,
-                    top: 0.05.sh,
+                  Container(
+                    width: adapt(
+                      current: constraints.maxWidth,
+                      atMost: 1080,
+                      smallerThan: 600,
+                      thenUse: 1.0,
+                      andUse: 0.8,
+                      ifBiggerThan: 800,
+                    ),
+                    padding: EdgeInsets.only(
+                      left: 0.01.sw,
+                      right: 0.01.sw,
+                      top: 0.05.sh,
+                    ),
+                    child: UrlForm(),
                   ),
-                  child: UrlForm(),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

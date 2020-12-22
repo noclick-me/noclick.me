@@ -23,8 +23,12 @@ void main() {
         Device.tabletPortrait,
         Device.tabletLandscape,
         const Device(
-          name: 'square-400x400',
-          size: Size(400, 400),
+          name: 'vga',
+          size: Size(640, 480),
+        ),
+        const Device(
+          name: 'full_hd',
+          size: Size(1920, 1080),
         ),
       ]);
     });
