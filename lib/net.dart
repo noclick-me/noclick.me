@@ -43,7 +43,7 @@ class NoClickService {
         }));
 
     if (response.statusCode != 200) {
-      return 'NOT OK: statuc=${response.statusCode}';
+      return 'NOT OK: status=${response.statusCode}';
     }
 
     return jsonDecode(response.body)['noclick_url'].toString();
