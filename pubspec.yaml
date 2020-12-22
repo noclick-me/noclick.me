@@ -20,6 +20,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pedantic: ^1.9.0
+  golden_toolkit: ^0.8.0
 
 flutter:
   uses-material-design: true
