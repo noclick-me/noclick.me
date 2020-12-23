@@ -65,12 +65,14 @@ class _UrlFormState extends State<UrlForm> {
       return errorMsg;
     }
 
-    // If there is no scheme, we try adding https:// as scheme
+    // If there is no scheme, we add https:// as scheme
     if (!uri.hasScheme) {
-      try {
+      if (url.startsWith('//')) {
+        uri = Uri.parse('https:' + url);
+      } else if (url.startsWith('/')) {
+        uri = Uri.parse('https:/' + url);
+      } else {
         uri = Uri.parse('https://' + url);
-      } on FormatException {
-        return errorMsg;
       }
 
       if (!uri.host.contains('.') ||
