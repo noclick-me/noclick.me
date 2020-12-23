@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide HttpClientProvider;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'net.dart' show NoClickService;
+import 'provider/http_client_provider.dart' show HttpClientProvider;
 
 class UrlForm extends StatefulWidget {
   UrlForm({Key key}) : super(key: key);
@@ -12,8 +13,6 @@ class UrlForm extends StatefulWidget {
 
 class _UrlFormState extends State<UrlForm> {
   final _formKey = GlobalKey<FormState>();
-
-  final _service = NoClickService();
 
   bool _submitting = false;
 
@@ -115,8 +114,11 @@ class _UrlFormState extends State<UrlForm> {
           ),
         );
 
+        final service =
+            NoClickService(httpClient: HttpClientProvider.of(context).client);
+
         try {
-          final result = await _service.createUrl(uri);
+          final result = await service.createUrl(uri);
           _fieldController.text = result;
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(

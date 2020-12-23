@@ -1,10 +1,6 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
-import 'dart:io' show X509Certificate, HttpClient;
-
-import 'package:flutter/foundation.dart' show kIsWeb;
-
+import 'package:meta/meta.dart' show required;
 import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart' show IOClient;
 
 class NoClickService {
   static const SERVER_URL_DEFAULT = 'https://api.noclick.me';
@@ -14,35 +10,16 @@ class NoClickService {
 
   Uri get serverUrl => _serverUrl;
 
-  http.Client _client;
+  final http.Client httpClient;
 
-  http.Client get httpClient => _client;
-
-  NoClickService({Uri serverUrl, http.Client client})
-      : _serverUrl = serverUrl ??
+  NoClickService({@required this.httpClient, Uri serverUrl})
+      : assert(httpClient != null),
+        _serverUrl = serverUrl ??
             Uri.parse(const String.fromEnvironment(SERVER_URL_VAR_NAME,
-                defaultValue: SERVER_URL_DEFAULT)) {
-    if (client != null) {
-      _client = client;
-      return;
-    }
-    // XXX: All this is a big hack to be able to connect to self-signed
-    //      certificates (which opens the door to any other bad certificate, so
-    //      this is really really a BAD THING (TM). It should only be enabled
-    //      in debug or test builds or removed completely in the future, once
-    //      a good and simple way to test is found.
-    if (kIsWeb) {
-      _client = http.Client();
-    } else {
-      final ioHttpClient = HttpClient();
-      ioHttpClient.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-      _client = IOClient(ioHttpClient);
-    }
-  }
+                defaultValue: SERVER_URL_DEFAULT));
 
   Future<String> createUrl(Uri url) async {
-    final response = await _client.post('$_serverUrl/url',
+    final response = await httpClient.post('$_serverUrl/url',
         headers: {
           'Content-type': 'application/json',
         },
