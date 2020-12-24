@@ -1,6 +1,6 @@
 {
-    "name": "app",
-    "short_name": "app",
+    "name": "noclick.me",
+    "short_name": "noclick.me",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
