@@ -14,6 +14,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        type: [ static, unit, goldens ]
+
     steps:
     - uses: actions/checkout@v2
 
@@ -29,22 +34,26 @@ jobs:
       run: flutter pub get
 
     - name: Analyze
+      if: matrix.type == 'static'
       uses: zgosalvez/github-actions-analyze-flutter@v1
       with:
         fail-on-warnings: true
 
     - name: Check format
+      if: matrix.type == 'static'
       run: flutter format -n --set-exit-if-changed lib test example
 
-    - name: Run unit tests
-      run: flutter test --coverage --coverage-path=coverage/unit.lcov.info
+    - name: Run ${{ matrix.type }} tests
+      if: matrix.type != 'static'
+      run: flutter test --coverage --coverage-path=coverage/${{ matrix.type }}.lcov.info test/${{ matrix.type }}
 
-    - name: Upload unit tests coverage to Codecov
+    - name: Upload ${{ matrix.type }} tests coverage to Codecov
+      if: matrix.type != 'static'
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: coverage/unit.lcov.info
-        flags: unit,flutter-${{ env.FLUTTER_CHANNEL }}
+        file: coverage/${{ matrix.type }}.lcov.info
+        flags: type-${{ matrix.type }},flutter-${{ env.FLUTTER_CHANNEL }}
 
   build:
     runs-on: ubuntu-latest
