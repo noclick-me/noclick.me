@@ -129,13 +129,6 @@ void main() {
       });
 
       testWidgets('server response is not 200 OK', (WidgetTester tester) async {
-        Future<Response> createUrlHandler(Request r) async {
-          final dynamic req = jsonDecode(r.body);
-          final u = Uri.parse(req['url'].toString());
-          final path = '${u.scheme}/${u.host}${u.path}/long';
-          return Response('{"noclick_url": "https://noclick.me/$path"}', 200);
-        }
-
         await tester.pumpWidget(createForm(
           mockClientHandler: (r) async => Response('BAD', 400),
         ));

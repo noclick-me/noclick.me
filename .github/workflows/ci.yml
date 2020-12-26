@@ -6,13 +6,12 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  JAVA_VERSION: 12.x
+  FLUTTER_CHANNEL: beta
+
 jobs:
   test:
-    strategy:
-      fail-fast: false
-      matrix:
-        flutter_channel: [ "beta" ]
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,11 +19,11 @@ jobs:
 
     - uses: actions/setup-java@v1
       with:
-        java-version: '12.x'
+        java-version: ${{ env.JAVA_VERSION }}
 
     - uses: subosito/flutter-action@v1
       with:
-        channel: ${{ matrix.flutter_channel }}
+        channel: ${{ env.FLUTTER_CHANNEL }}
 
     - name: Install dependencies
       run: flutter pub get
@@ -59,6 +58,47 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: coverage/unit.lcov.info
-        flags: unit,flutter-${{ matrix.flutter_channel }}
+        flags: unit,flutter-${{ env.FLUTTER_CHANNEL }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ "apk", "web" ]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+
+    - name: Install Flutter
+      uses: subosito/flutter-action@v1
+      with:
+        channel: ${{ env.FLUTTER_CHANNEL }}
+
+    - name: Enable Flutter web
+      if: ${{ matrix.target == 'web' }}
+      run: flutter config --enable-web
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Build ${{ matrix.target }}
+      run: flutter build ${{ matrix.target }} --release
+
+    - name: Save build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.target }}
+        path: |
+          build/web/
+          build/app/outputs/flutter-apk/app-release.apk
 
 # vim: set et sw=2 sts=2 :
