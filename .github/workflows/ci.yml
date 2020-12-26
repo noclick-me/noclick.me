@@ -69,7 +69,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ apk, web ]
+        target: [ android, android-arm, android-arm64, android-x64, web ]
 
     steps:
     - name: Check out code
@@ -92,8 +92,26 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Build ${{ matrix.target }}
-      run: flutter build ${{ matrix.target }} --release
+    - name: Build multi-arch apk
+      if: matrix.target == 'android'
+      run: flutter build apk --release
+
+    - name: Build apk for ${{ matrix.target }}
+      if: startsWith(matrix.target, 'android-')
+      run: flutter build apk --target-platform ${{ matrix.target }} --release
+
+    - name: Build web
+      if: matrix.target == 'web'
+      run: flutter build web --release
+
+    - name: Save build artifacts
+      if: matrix.target == 'android'
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.target }}
+        path: |
+          build/web/
+          build/app/outputs/flutter-apk/app-release.apk
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v2
