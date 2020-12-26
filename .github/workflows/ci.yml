@@ -55,6 +55,13 @@ jobs:
         file: coverage/${{ matrix.type }}.lcov.info
         flags: type-${{ matrix.type }},flutter-${{ env.FLUTTER_CHANNEL }}
 
+    - name: Save coverage reports as artifacts
+      if: matrix.type != 'static'
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-${{ matrix.type }}
+        path: coverage/${{ matrix.type }}.lcov.info
+
   build:
     runs-on: ubuntu-latest
     needs: test
