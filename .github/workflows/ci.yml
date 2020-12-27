@@ -124,6 +124,7 @@ jobs:
       with:
         name: build-${{ matrix.target }}
         path: artifacts/${{ matrix.target }}/noclickme*.apk
+        if-no-files-found: error
 
     - name: Save build artifacts for ${{ matrix.target }}
       if: "!startsWith(matrix.target, 'android')"
@@ -131,6 +132,7 @@ jobs:
       with:
         name: build-${{ matrix.target }}
         path: artifacts/${{ matrix.target }}/
+        if-no-files-found: error
 
   deploy:
     runs-on: ubuntu-latest
