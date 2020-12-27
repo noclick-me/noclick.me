@@ -20,6 +20,4 @@ jobs:
             echo ::error "::Found WIP commit: $wip"
           done
           exit 1
-        else
-          echo ::error ::"Found WIP commits"
         fi
