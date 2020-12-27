@@ -118,14 +118,14 @@ jobs:
         mkdir -p artifacts
         mv build/web artifacts/$TARGET
 
-    - name: Save build artifacts
+    - name: Save build artifacts for ${{ matrix.target }}
       if: startsWith(matrix.target, 'android')
       uses: actions/upload-artifact@v2
       with:
         name: build-${{ matrix.target }}
         path: artifacts/${{ matrix.target }}/noclickme*.apk
 
-    - name: Save build artifacts
+    - name: Save build artifacts for ${{ matrix.target }}
       if: "!startsWith(matrix.target, 'android')"
       uses: actions/upload-artifact@v2
       with:
