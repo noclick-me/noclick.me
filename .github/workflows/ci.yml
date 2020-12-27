@@ -94,31 +94,43 @@ jobs:
 
     - name: Build multi-arch apk
       if: matrix.target == 'android'
-      run: flutter build apk --release
+      run: |
+        TARGET=${{ matrix.target }}
+        flutter build apk --release
+        mkdir -p artifacts/$TARGET
+        mv build/app/outputs/flutter-apk/app-release.apk \
+          artifacts/$TARGET/noclickme-$(git describe).apk
 
     - name: Build apk for ${{ matrix.target }}
       if: startsWith(matrix.target, 'android-')
-      run: flutter build apk --target-platform ${{ matrix.target }} --release
+      run: |
+        TARGET=${{ matrix.target }}
+        ARCH=$(echo $TARGET | cut -d- -f2)
+        flutter build apk --target-platform $TARGET --release
+        mkdir -p artifacts/$TARGET
+        mv build/app/outputs/flutter-apk/app-release.apk \
+          artifacts/$TARGET/noclickme-$ARCH-$(git describe).apk
 
     - name: Build web
       if: matrix.target == 'web'
-      run: flutter build web --release
+      run: |
+        TARGET=${{ matrix.target }}
+        flutter build $TARGET --release
+        mkdir -p artifacts
+        mv build/web artifacts/$TARGET
 
     - name: Save build artifacts
-      if: matrix.target == 'android'
+      if: startsWith(matrix.target, 'android')
       uses: actions/upload-artifact@v2
       with:
         name: build-${{ matrix.target }}
-        path: |
-          build/web/
-          build/app/outputs/flutter-apk/app-release.apk
+        path: artifacts/${{ matrix.target }}/noclickme*.apk
 
     - name: Save build artifacts
+      if: "!startsWith(matrix.target, 'android')"
       uses: actions/upload-artifact@v2
       with:
         name: build-${{ matrix.target }}
-        path: |
-          build/web/
-          build/app/outputs/flutter-apk/app-release.apk
+        path: artifacts/${{ matrix.target }}/
 
 # vim: set et sw=2 sts=2 :
