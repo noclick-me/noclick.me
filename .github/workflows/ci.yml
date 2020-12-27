@@ -134,7 +134,7 @@ jobs:
         path: artifacts/${{ matrix.target }}/
         if-no-files-found: error
 
-  deploy:
+  deploy-web:
     runs-on: ubuntu-latest
     needs: [ build, test ]
     if: github.repository == 'noclick-me/noclick.me' && github.event_name == 'push'
@@ -178,7 +178,7 @@ jobs:
         EOT
         if test -z "$diff" -o "$diff" = "$noop_diff"
         then
-          echo "::warning ::No changes detected in the repository"
+          echo "::warning ::No changes detected in the repository, skipping deployment for web"
         else
           echo "::set-output name=has_changes::true"
         fi
