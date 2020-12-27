@@ -1,5 +1,0 @@
-+++ b/flutter_service_worker.js
-@@ -15,2 +15,2 @@ const RESOURCES = {
---
-+++ b/index.html
-@@ -39 +39 @@
