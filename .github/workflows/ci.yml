@@ -166,16 +166,17 @@ jobs:
       id: diff
       run: |
         git add -A
-        diff=$(git diff --cached -U0 | grep -B1 @@)
-        tmp=$(mktemp)
-        read -r -d '' noop_diff <<'EOT'
+        # we need the || true so it never fails the job
+        diff=$(git diff --cached -U0 | grep -B1 @@) || true
+        # read return 1 on EOF, so we need ! so it doesn't fail
+        ! read -r -d '' noop_diff <<'EOT'
         +++ b/flutter_service_worker.js
         @@ -15,2 +15,2 @@ const RESOURCES = {
         --
         +++ b/index.html
         @@ -39 +39 @@
         EOT
-        if test -z -o test "$noop_diff" == "$diff"
+        if test -z "$diff" -o "$diff" = "$noop_diff"
         then
           echo "::warning ::No changes detected in the repository"
         else
