@@ -1,15 +1,3 @@
-### License Declaration of Intent
-
-The main goal of the license chosen for this project is to protect user's
-right. There is a second goal, very hard to convey, which is to protect my
-ability (as developer behind the project) to sustain myself by finding ways to
-make a living with my work.
-
-Please read this (non-legally binding) declaration of intent if you want to
-make sure this software can stay alive and healthy:
-
-https://github.com/llucax/llucax/blob/main/license-declaration-of-intent-v1.md
-
 ### GNU AFFERO GENERAL PUBLIC LICENSE
 
 Version 3, 19 November 2007
