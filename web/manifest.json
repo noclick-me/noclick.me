@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Share links with descriptive URLs",
+    "description": "Share links with more descriptive URLs",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
