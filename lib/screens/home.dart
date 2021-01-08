@@ -2,8 +2,8 @@ import 'dart:math' show min;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'logo.dart' show Logo;
-import 'url_form.dart' show UrlForm;
+import '../logo.dart' show Logo;
+import '../url_form.dart' show UrlForm;
 
 class Home extends StatelessWidget {
   const Home({Key key}) : super(key: key);

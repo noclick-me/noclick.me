@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 
 import 'package:noclick_me/screenutil_builder.dart';
-import 'package:noclick_me/home.dart';
+import 'package:noclick_me/screens/home.dart';
 
 void main() {
   // FIXME: Normally we should configure this in flutter_test_config.dart (see
