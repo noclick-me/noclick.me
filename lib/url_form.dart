@@ -35,6 +35,7 @@ class _UrlFormState extends State<UrlForm> {
   @override
   void dispose() {
     _fieldController.dispose();
+    _fieldFocusNode.dispose();
     super.dispose();
   }
 
