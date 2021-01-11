@@ -1,4 +1,5 @@
-import 'dart:convert';
+import 'dart:convert' show jsonDecode;
+import 'dart:async' show FutureOr;
 
 import 'package:flutter/material.dart' hide HttpClientProvider;
 import 'package:flutter_test/flutter_test.dart';
@@ -8,18 +9,22 @@ import 'package:http/testing.dart' show MockClient, MockClientHandler;
 import 'package:noclick_me/provider/http_client_provider.dart'
     show HttpClientProvider;
 import 'package:noclick_me/screenutil_builder.dart' show screenutilBuilder;
+
 import 'package:noclick_me/url_form.dart';
 
 void main() {
   group('UrlForm', () {
     const errorMsg = 'Please enter a valid http/https internet URL';
 
-    Widget createForm({MockClientHandler mockClientHandler}) => MaterialApp(
+    Widget createForm(
+            {MockClientHandler mockClientHandler,
+            FutureOr<void> Function(String url) onSuccess}) =>
+        MaterialApp(
           home: Scaffold(
             body: HttpClientProvider(
               client: MockClient(mockClientHandler ?? (r) => null),
               child: screenutilBuilder(
-                child: UrlForm(),
+                child: UrlForm(onSuccess: onSuccess),
               ),
             ),
           ),
@@ -129,8 +134,10 @@ void main() {
       });
 
       testWidgets('server response is not 200 OK', (WidgetTester tester) async {
+        String success_url;
         await tester.pumpWidget(createForm(
           mockClientHandler: (r) async => Response('BAD', 400),
+          onSuccess: (url) => success_url = url,
         ));
 
         await tester.enterText(
@@ -140,8 +147,32 @@ void main() {
 
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pumpAndSettle(); // Wait for the new screen animation
-        expect(find.text('NOT OK: status=400'), findsOneWidget);
+        expect(success_url, 'NOT OK: status=400');
       });
+
+      testWidgets('there is an unexpected exception in net',
+          (WidgetTester tester) async {
+        const exceptionText = 'Unexpected!Ex';
+        await tester.pumpWidget(createForm(
+          mockClientHandler: (r) async => throw Exception(exceptionText),
+        ));
+
+        await tester.enterText(
+          find.byType(TextFormField),
+          'https://example.com',
+        );
+        expect(find.byType(SnackBar), findsNothing);
+
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle(); // Wait for the SnackBar in animation
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(find.text('Could not retrieve the page: $exceptionText'),
+            findsOneWidget);
+
+        await tester.pump(Duration(seconds: 4)); // Default SnackBar duration
+        await tester.pumpAndSettle();
+        expect(find.byType(SnackBar), findsNothing);
+      }); // FIXME: I CAN'T FIND THE SNACKBAR with the error
     });
 
     group('succeeds', () {
@@ -155,14 +186,16 @@ void main() {
         }
 
         testWidgets('for $input', (WidgetTester tester) async {
+          String success_url;
           await tester.pumpWidget(createForm(
             mockClientHandler: createUrlHandler,
+            onSuccess: (url) => success_url = url,
           ));
 
           await tester.enterText(find.byType(TextFormField), input);
           await tester.testTextInput.receiveAction(TextInputAction.done);
           await tester.pumpAndSettle();
-          expect(find.text(output), findsOneWidget);
+          expect(success_url, output);
         });
       }
 
