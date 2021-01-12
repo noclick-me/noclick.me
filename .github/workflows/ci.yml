@@ -39,21 +39,9 @@ jobs:
       with:
         fail-on-warnings: true
 
-    - name: Run unit/goldens tests
-      if: matrix.type == 'unit' || matrix.type == 'goldens'
-      run: flutter test --coverage --coverage-path=coverage/${{ matrix.type }}.lcov.info test/${{ matrix.type }}
-
-    - name: Run special tests
-      if: matrix.type == 'special'
-      run: |
-        shopt -s nullglob
-        for t in test/special/*
-        do
-          flutter test --coverage \
-            --coverage-path="coverage/${{ matrix.type }}.$(basename $t).lcov.info" \
-            "$(cat $t/flutter_test_args 2>/dev/null)" \
-            "$t"
-        done
+    - name: Run ${{ matrix.type }} tests
+      if: matrix.type != 'static'
+      run: tool/ci test-${{ matrix.type }}
 
     - name: Upload ${{ matrix.type }} tests coverage to Codecov
       if: matrix.type != 'static'

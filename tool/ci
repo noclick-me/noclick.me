@@ -1,0 +1,74 @@
+#!/bin/bash
+set -eu
+
+main() {
+  # Run the ci command if none was specified
+  if test $# -lt 1; then set -- ci; fi
+
+  for cmd in "$@"
+  do
+    "cmd_$(echo $cmd | tr - _)"
+  done
+}
+
+cmd_ci() {
+  cmd_check
+  cmd_test_unit
+  cmd_test_goldens
+  cmd_test_special
+  cmd_gen_cov
+}
+
+cmd_check() {
+  cmd_format
+  cmd_analyze
+}
+
+cmd_analyze() {
+  flutter analyze lib test
+}
+
+cmd_format() {
+  echo "Checking format..."
+  flutter format -n --set-exit-if-changed lib test
+}
+
+test_normal() {
+  path=$1
+  shift
+  flutter test --coverage \
+      --coverage-path=coverage/$(echo $path | tr / -).lcov.info \
+      "$@" \
+      $path
+}
+
+cmd_test_unit() {
+  echo "Running unit tests"
+  test_normal test/unit
+}
+
+cmd_test_goldens() {
+  echo "Running goldens tests"
+  test_normal test/goldens
+}
+
+cmd_test_special() {
+  echo "Running special tests"
+  (
+  shopt -s nullglob
+  for t in test/special/*
+  do
+    test_normal "$t" "$(cat $t/flutter_test_args 2>/dev/null)"
+    done;
+  )
+}
+
+cmd_gen_cov() {
+  echo "Generating coverage report..."
+  genhtml coverage/*.lcov.info --output-directory coverage/html
+  echo
+  echo "HTML coverage report available at:"
+  echo "$PWD/coverage/html/index.html"
+}
+
+main "$@"
