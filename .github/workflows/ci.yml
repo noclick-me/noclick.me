@@ -39,10 +39,6 @@ jobs:
       with:
         fail-on-warnings: true
 
-    - name: Check format
-      if: matrix.type == 'static'
-      run: flutter format -n --set-exit-if-changed lib test example
-
     - name: Run unit/goldens tests
       if: matrix.type == 'unit' || matrix.type == 'goldens'
       run: flutter test --coverage --coverage-path=coverage/${{ matrix.type }}.lcov.info test/${{ matrix.type }}
