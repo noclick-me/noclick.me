@@ -137,11 +137,11 @@ void main() {
           find.byType(TextFormField),
           'https://example.com',
         );
+
         await tester.testTextInput.receiveAction(TextInputAction.done);
-        await tester.pump(Duration(seconds: 6));
-        expect(find.byType(SnackBar), findsOneWidget);
-        expect(find.text('Could not retrieve the page'), findsOneWidget);
-      }, skip: true); // FIXME: I CAN'T FIND THE SNACKBAR with the error
+        await tester.pumpAndSettle(); // Wait for the new screen animation
+        expect(find.text('NOT OK: status=400'), findsOneWidget);
+      });
     });
 
     group('succeeds', () {
