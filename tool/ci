@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eu
 
+MIN_COV_PCT=${MIN_COV_PCT:-92}
+
 main() {
   # Run the ci command if none was specified
   if test $# -lt 1; then set -- ci; fi
@@ -16,7 +18,7 @@ cmd_ci() {
   cmd_test_unit
   cmd_test_goldens
   cmd_test_special
-  cmd_gen_cov
+  cmd_cov_check
 }
 
 cmd_check() {
@@ -63,12 +65,28 @@ cmd_test_special() {
   )
 }
 
-cmd_gen_cov() {
+cmd_cov_check() {
   echo "Generating coverage report..."
   genhtml coverage/*.lcov.info --output-directory coverage/html
+
+  cov=$(sed -n 's|.*<td class="headerCovTableEntryHi">\([0-9]\+\)\(\.[0-9]\+\)\? %</td>.*|\1|p' coverage/html/index.html)
+  r=0
+  if test "$cov" -lt "$MIN_COV_PCT"
+  then
+    echo
+    echo "====================================================================="
+    echo "                COVERAGE IS BELOW $MIN_COV_PCT%"
+    echo "====================================================================="
+  fi
+
   echo
   echo "HTML coverage report available at:"
   echo "$PWD/coverage/html/index.html"
+
+  if test "$cov" -lt "$MIN_COV_PCT"
+  then
+    exit 1
+  fi
 }
 
 main "$@"
