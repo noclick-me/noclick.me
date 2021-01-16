@@ -1,3 +1,5 @@
+import 'dart:async' show FutureOr;
+
 import 'package:flutter/material.dart' hide HttpClientProvider;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -5,7 +7,8 @@ import 'net.dart' show NoClickService;
 import 'provider/http_client_provider.dart' show HttpClientProvider;
 
 class UrlForm extends StatefulWidget {
-  UrlForm({Key key}) : super(key: key);
+  final FutureOr<void> Function(String url) onSuccess;
+  UrlForm({this.onSuccess, Key key}) : super(key: key);
 
   @override
   _UrlFormState createState() => _UrlFormState();
@@ -35,6 +38,7 @@ class _UrlFormState extends State<UrlForm> {
   @override
   void dispose() {
     _fieldController.dispose();
+    _fieldFocusNode.dispose();
     super.dispose();
   }
 
@@ -106,39 +110,48 @@ class _UrlFormState extends State<UrlForm> {
 
       setState(() => _submitting = true);
 
-      void _trySubmit() async {
-        // If the form is valid, display a Snackbar.
-        ScaffoldMessenger.of(context).showSnackBar(
+      // If the form is valid, display a Snackbar.
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
           SnackBar(
             content: Text('Expanding ${uri}'),
           ),
         );
 
-        final service =
-            NoClickService(httpClient: HttpClientProvider.of(context).client);
+      final service =
+          NoClickService(httpClient: HttpClientProvider.of(context).client);
 
-        try {
-          final result = await service.createUrl(uri);
-          _fieldController.text = result;
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
+      String url;
+      try {
+        url = await service.createUrl(uri);
+      } catch (e) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
             SnackBar(
-              content: Text('Could not retrieve the page: $e'),
+              content: Text('Could not retrieve the page: ${e.message}'),
             ),
           );
-        }
-      }
-
-      try {
-        await _trySubmit();
-      } finally {
-        setState(() => _submitting = false);
         _fieldFocusNode.requestFocus();
         _fieldController.selection = TextSelection(
           baseOffset: 0,
           extentOffset: _fieldController.text.length,
         );
+        return;
+      } finally {
+        setState(() => _submitting = false);
       }
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (widget.onSuccess != null) {
+        await widget.onSuccess(url);
+      }
+
+      setState(() => _fieldController.clear());
+      _formKey.currentState.reset();
+      _fieldFocusNode.requestFocus();
     }
   }
 

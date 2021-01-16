@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        type: [ static, unit, goldens ]
+        type: [ static, unit, goldens, special ]
 
     steps:
     - uses: actions/checkout@v2
@@ -39,20 +39,18 @@ jobs:
       with:
         fail-on-warnings: true
 
-    - name: Check format
-      if: matrix.type == 'static'
-      run: flutter format -n --set-exit-if-changed lib test example
-
     - name: Run ${{ matrix.type }} tests
       if: matrix.type != 'static'
-      run: flutter test --coverage --coverage-path=coverage/${{ matrix.type }}.lcov.info test/${{ matrix.type }}
+      run: tool/ci test-${{ matrix.type }}
 
     - name: Upload ${{ matrix.type }} tests coverage to Codecov
       if: matrix.type != 'static'
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: coverage/${{ matrix.type }}.lcov.info
+        # We can't use coverage/*.lcov.info because is not supported. See:
+        # https://github.com/codecov/codecov-bash/pull/400
+        files: '*.lcov.info'
         flags: type-${{ matrix.type }},flutter-${{ env.FLUTTER_CHANNEL }}
 
     - name: Save coverage reports as artifacts
@@ -60,7 +58,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: coverage-${{ matrix.type }}
-        path: coverage/${{ matrix.type }}.lcov.info
+        path: coverage/*.lcov.info
 
   build:
     runs-on: ubuntu-latest

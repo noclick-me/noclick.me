@@ -1,0 +1,2 @@
+#!/bin/sh
+exec flutter run --dart-define=TEST_API_MOCK_RESPONSE=1 "$@"

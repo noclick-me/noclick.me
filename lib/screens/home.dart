@@ -2,8 +2,9 @@ import 'dart:math' show min;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'logo.dart' show Logo;
-import 'url_form.dart' show UrlForm;
+import '../logo.dart' show Logo;
+import '../url_form.dart' show UrlForm;
+import 'show.dart' show ShowUrlScreen;
 
 class Home extends StatelessWidget {
   const Home({Key key}) : super(key: key);
@@ -71,7 +72,14 @@ class Home extends StatelessWidget {
                       right: 0.01.sw,
                       top: 0.05.sh,
                     ),
-                    child: UrlForm(),
+                    child: UrlForm(
+                      onSuccess: (url) => Navigator.push<ShowUrlScreen>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShowUrlScreen(url),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

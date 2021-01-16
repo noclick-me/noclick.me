@@ -1,0 +1,92 @@
+#!/bin/bash
+set -eu
+
+MIN_COV_PCT=${MIN_COV_PCT:-92}
+
+main() {
+  # Run the ci command if none was specified
+  if test $# -lt 1; then set -- ci; fi
+
+  for cmd in "$@"
+  do
+    "cmd_$(echo $cmd | tr - _)"
+  done
+}
+
+cmd_ci() {
+  cmd_check
+  cmd_test_unit
+  cmd_test_goldens
+  cmd_test_special
+  cmd_cov_check
+}
+
+cmd_check() {
+  cmd_format
+  cmd_analyze
+}
+
+cmd_analyze() {
+  flutter analyze lib test
+}
+
+cmd_format() {
+  echo "Checking format..."
+  flutter format -n --set-exit-if-changed lib test
+}
+
+test_normal() {
+  path=$1
+  shift
+  flutter test --coverage \
+      --coverage-path=coverage/$(echo $path | tr / -).lcov.info \
+      "$@" \
+      $path
+}
+
+cmd_test_unit() {
+  echo "Running unit tests"
+  test_normal test/unit
+}
+
+cmd_test_goldens() {
+  echo "Running goldens tests"
+  test_normal test/goldens
+}
+
+cmd_test_special() {
+  echo "Running special tests"
+  (
+  shopt -s nullglob
+  for t in test/special/*
+  do
+    test_normal "$t" "$(cat $t/flutter_test_args 2>/dev/null)"
+    done;
+  )
+}
+
+cmd_cov_check() {
+  echo "Generating coverage report..."
+  genhtml coverage/*.lcov.info --output-directory coverage/html
+
+  cov=$(sed -n 's|.*<td class="headerCovTableEntryHi">\([0-9]\+\)\(\.[0-9]\+\)\? %</td>.*|\1|p' coverage/html/index.html)
+  r=0
+  if test "$cov" -lt "$MIN_COV_PCT"
+  then
+    echo
+    echo "====================================================================="
+    echo "                COVERAGE IS BELOW $MIN_COV_PCT%"
+    echo "====================================================================="
+  fi
+
+  echo
+  echo "HTML coverage report available at:"
+  echo "$PWD/coverage/html/index.html"
+
+  if test "$cov" -lt "$MIN_COV_PCT"
+  then
+    exit 1
+  fi
+}
+
+main "$@"

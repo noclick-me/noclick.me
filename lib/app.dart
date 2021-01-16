@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'home.dart' show Home;
+import 'screens/home.dart' show Home;
 import 'screenutil_builder.dart' show screenutilBuilder;
 
 class App extends StatelessWidget {
