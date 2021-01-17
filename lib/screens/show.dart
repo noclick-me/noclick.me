@@ -65,19 +65,20 @@ class ShowUrlScreen extends StatelessWidget {
                     child: Card(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                          vertical: 30.h,
-                          horizontal: 30.w,
+                          vertical: 25.h,
+                          horizontal: 8.w,
                         ),
                         child: Column(
                           children: <Widget>[
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 TextButton.icon(
                                   icon: const Icon(Icons.open_in_new),
                                   label: const Text('OPEN'),
                                   onPressed: () => _launchUrl(url, context),
                                 ),
+                                SizedBox(width: 8.w),
                                 TextButton.icon(
                                   icon: const Icon(Icons.copy),
                                   label: const Text('COPY'),
@@ -95,6 +96,7 @@ class ShowUrlScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
+                            SizedBox(height: 15.h),
                             SelectableLinkify(
                               text: url,
                               options: LinkifyOptions(
