@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodCall, SystemChannels;
+import 'package:flutter_linkify/flutter_linkify.dart' show SelectableLinkify;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart'
@@ -19,7 +20,8 @@ class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
 void main() {
   group('ShowUrlScreen', () {
-    const mockUrl = 'https://noclick.me/mock/url';
+    const mockUrl =
+        'https://noclick.me/mock/url/asdfghjklqwertyuiopzxcvbnm_-.1234567890';
     final mockNavigatorObserver = MockNavigatorObserver();
 
     final showUrlScreenApp = MaterialApp(
@@ -33,7 +35,7 @@ void main() {
 
     testWidgets('shows the URL', (WidgetTester tester) async {
       await tester.pumpWidget(showUrlScreenApp);
-      expect(find.text(mockUrl), findsOneWidget);
+      expect(find.text(mockUrl.replaceAll('-', '\u2011')), findsOneWidget);
       verifyNever(mockNavigatorObserver.didPop(any, any));
     });
 
@@ -66,142 +68,146 @@ void main() {
       verifyNever(mockNavigatorObserver.didPop(any, any));
     });
 
-    testWidgets('OPEN launches the URL or shows an error',
-        (WidgetTester tester) async {
-      // Mock the url_launcher service
-      final mockLauncher = MockUrlLauncher();
-      final oldInstance = UrlLauncherPlatform.instance;
-      UrlLauncherPlatform.instance = mockLauncher;
-      addTearDown(() => UrlLauncherPlatform.instance = oldInstance);
+    void testOpenUrl(Finder buttonFinder) {
+      testWidgets('OPEN launches the URL or shows an error',
+          (WidgetTester tester) async {
+        // Mock the url_launcher service
+        final mockLauncher = MockUrlLauncher();
+        final oldInstance = UrlLauncherPlatform.instance;
+        UrlLauncherPlatform.instance = mockLauncher;
+        addTearDown(() => UrlLauncherPlatform.instance = oldInstance);
 
-      await tester.pumpWidget(showUrlScreenApp);
-      final openButtonFinder = find.text('OPEN');
-      expect(openButtonFinder, findsOneWidget);
+        await tester.pumpWidget(showUrlScreenApp);
+        expect(buttonFinder, findsOneWidget);
 
-      // Success
-      when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => true);
-      when(mockLauncher.launch(
-        mockUrl,
-        useWebView: true,
-        enableJavaScript: true,
-        enableDomStorage: anyNamed('enableDomStorage'),
-        useSafariVC: anyNamed('useSafariVC'),
-        headers: anyNamed('headers'),
-        universalLinksOnly: anyNamed('universalLinksOnly'),
-        webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      )).thenAnswer((_) async => true);
-      await tester.tap(openButtonFinder);
-      await tester.pump();
-      verify(mockLauncher.canLaunch(mockUrl)).called(1);
-      verify(mockLauncher.launch(
-        mockUrl,
-        useWebView: true,
-        enableJavaScript: true,
-        enableDomStorage: anyNamed('enableDomStorage'),
-        useSafariVC: anyNamed('useSafariVC'),
-        headers: anyNamed('headers'),
-        universalLinksOnly: anyNamed('universalLinksOnly'),
-        webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      )).called(1);
-      verifyNoMoreInteractions(mockLauncher);
-      // No SnackBar should be shown
-      await tester.pump(Duration(seconds: 1));
-      expect(find.byType(SnackBar), findsNothing);
+        // Success
+        when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => true);
+        when(mockLauncher.launch(
+          mockUrl,
+          useWebView: true,
+          enableJavaScript: true,
+          enableDomStorage: anyNamed('enableDomStorage'),
+          useSafariVC: anyNamed('useSafariVC'),
+          headers: anyNamed('headers'),
+          universalLinksOnly: anyNamed('universalLinksOnly'),
+          webOnlyWindowName: anyNamed('webOnlyWindowName'),
+        )).thenAnswer((_) async => true);
+        await tester.tap(buttonFinder);
+        await tester.pump();
+        verify(mockLauncher.canLaunch(mockUrl)).called(1);
+        verify(mockLauncher.launch(
+          mockUrl,
+          useWebView: true,
+          enableJavaScript: true,
+          enableDomStorage: anyNamed('enableDomStorage'),
+          useSafariVC: anyNamed('useSafariVC'),
+          headers: anyNamed('headers'),
+          universalLinksOnly: anyNamed('universalLinksOnly'),
+          webOnlyWindowName: anyNamed('webOnlyWindowName'),
+        )).called(1);
+        verifyNoMoreInteractions(mockLauncher);
+        // No SnackBar should be shown
+        await tester.pump(Duration(seconds: 1));
+        expect(find.byType(SnackBar), findsNothing);
 
-      // Error if canLaunch is false
-      const canLaunchError = "Don't know how to open this URL type";
-      clearInteractions(mockLauncher);
-      when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => false);
-      await tester.tap(openButtonFinder);
-      await tester.pump();
-      verify(mockLauncher.canLaunch(mockUrl)).called(1);
-      verifyNever(mockLauncher.launch(
-        any,
-        useWebView: anyNamed('useWebView'),
-        enableJavaScript: anyNamed('enableJavaScript'),
-        enableDomStorage: anyNamed('enableDomStorage'),
-        useSafariVC: anyNamed('useSafariVC'),
-        headers: anyNamed('headers'),
-        universalLinksOnly: anyNamed('universalLinksOnly'),
-        webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      ));
-      verifyNoMoreInteractions(mockLauncher);
-      // No SnackBar should be shown
-      await tester.pump(Duration(seconds: 1));
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.text(canLaunchError), findsOneWidget);
-      await tester.pump(Duration(seconds: 3)); // Default duration is 4
-      await tester.pumpAndSettle();
+        // Error if canLaunch is false
+        const canLaunchError = "Don't know how to open this URL type";
+        clearInteractions(mockLauncher);
+        when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => false);
+        await tester.tap(buttonFinder);
+        await tester.pump();
+        verify(mockLauncher.canLaunch(mockUrl)).called(1);
+        verifyNever(mockLauncher.launch(
+          any,
+          useWebView: anyNamed('useWebView'),
+          enableJavaScript: anyNamed('enableJavaScript'),
+          enableDomStorage: anyNamed('enableDomStorage'),
+          useSafariVC: anyNamed('useSafariVC'),
+          headers: anyNamed('headers'),
+          universalLinksOnly: anyNamed('universalLinksOnly'),
+          webOnlyWindowName: anyNamed('webOnlyWindowName'),
+        ));
+        verifyNoMoreInteractions(mockLauncher);
+        // No SnackBar should be shown
+        await tester.pump(Duration(seconds: 1));
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(find.text(canLaunchError), findsOneWidget);
+        await tester.pump(Duration(seconds: 3)); // Default duration is 4
+        await tester.pumpAndSettle();
 
-      // Error if launch returns false
-      clearInteractions(mockLauncher);
-      when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => true);
-      when(mockLauncher.launch(
-        mockUrl,
-        useWebView: true,
-        enableJavaScript: true,
-        enableDomStorage: anyNamed('enableDomStorage'),
-        useSafariVC: anyNamed('useSafariVC'),
-        headers: anyNamed('headers'),
-        universalLinksOnly: anyNamed('universalLinksOnly'),
-        webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      )).thenAnswer((_) async => false);
-      await tester.tap(openButtonFinder);
-      await tester.pump();
-      verify(mockLauncher.canLaunch(mockUrl)).called(1);
-      verify(mockLauncher.launch(
-        any,
-        useWebView: anyNamed('useWebView'),
-        enableJavaScript: anyNamed('enableJavaScript'),
-        enableDomStorage: anyNamed('enableDomStorage'),
-        useSafariVC: anyNamed('useSafariVC'),
-        headers: anyNamed('headers'),
-        universalLinksOnly: anyNamed('universalLinksOnly'),
-        webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      )).called(1);
-      verifyNoMoreInteractions(mockLauncher);
-      // No SnackBar should be shown
-      await tester.pump(Duration(seconds: 1));
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.text(canLaunchError), findsOneWidget);
-      await tester.pump(Duration(seconds: 3)); // Default duration is 4
-      await tester.pumpAndSettle();
+        // Error if launch returns false
+        clearInteractions(mockLauncher);
+        when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => true);
+        when(mockLauncher.launch(
+          mockUrl,
+          useWebView: true,
+          enableJavaScript: true,
+          enableDomStorage: anyNamed('enableDomStorage'),
+          useSafariVC: anyNamed('useSafariVC'),
+          headers: anyNamed('headers'),
+          universalLinksOnly: anyNamed('universalLinksOnly'),
+          webOnlyWindowName: anyNamed('webOnlyWindowName'),
+        )).thenAnswer((_) async => false);
+        await tester.tap(buttonFinder);
+        await tester.pump();
+        verify(mockLauncher.canLaunch(mockUrl)).called(1);
+        verify(mockLauncher.launch(
+          any,
+          useWebView: anyNamed('useWebView'),
+          enableJavaScript: anyNamed('enableJavaScript'),
+          enableDomStorage: anyNamed('enableDomStorage'),
+          useSafariVC: anyNamed('useSafariVC'),
+          headers: anyNamed('headers'),
+          universalLinksOnly: anyNamed('universalLinksOnly'),
+          webOnlyWindowName: anyNamed('webOnlyWindowName'),
+        )).called(1);
+        verifyNoMoreInteractions(mockLauncher);
+        // No SnackBar should be shown
+        await tester.pump(Duration(seconds: 1));
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(find.text(canLaunchError), findsOneWidget);
+        await tester.pump(Duration(seconds: 3)); // Default duration is 4
+        await tester.pumpAndSettle();
 
-      // Error if launch throws
-      clearInteractions(mockLauncher);
-      when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => true);
-      when(mockLauncher.launch(
-        mockUrl,
-        useWebView: true,
-        enableJavaScript: true,
-        enableDomStorage: anyNamed('enableDomStorage'),
-        useSafariVC: anyNamed('useSafariVC'),
-        headers: anyNamed('headers'),
-        universalLinksOnly: anyNamed('universalLinksOnly'),
-        webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      )).thenAnswer((_) async => throw Exception('LaunchException'));
-      await tester.tap(openButtonFinder);
-      await tester.pump();
-      verify(mockLauncher.canLaunch(mockUrl)).called(1);
-      verify(mockLauncher.launch(
-        any,
-        useWebView: anyNamed('useWebView'),
-        enableJavaScript: anyNamed('enableJavaScript'),
-        enableDomStorage: anyNamed('enableDomStorage'),
-        useSafariVC: anyNamed('useSafariVC'),
-        headers: anyNamed('headers'),
-        universalLinksOnly: anyNamed('universalLinksOnly'),
-        webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      )).called(1);
-      verifyNoMoreInteractions(mockLauncher);
-      // No SnackBar should be shown
-      await tester.pump(Duration(seconds: 1));
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.text("Can't open URL: LaunchException"), findsOneWidget);
-      await tester.pump(Duration(seconds: 3)); // Default duration is 4
-      await tester.pumpAndSettle();
-      verifyNever(mockNavigatorObserver.didPop(any, any));
-    });
+        // Error if launch throws
+        clearInteractions(mockLauncher);
+        when(mockLauncher.canLaunch(mockUrl)).thenAnswer((_) async => true);
+        when(mockLauncher.launch(
+          mockUrl,
+          useWebView: true,
+          enableJavaScript: true,
+          enableDomStorage: anyNamed('enableDomStorage'),
+          useSafariVC: anyNamed('useSafariVC'),
+          headers: anyNamed('headers'),
+          universalLinksOnly: anyNamed('universalLinksOnly'),
+          webOnlyWindowName: anyNamed('webOnlyWindowName'),
+        )).thenAnswer((_) async => throw Exception('LaunchException'));
+        await tester.tap(buttonFinder);
+        await tester.pump();
+        verify(mockLauncher.canLaunch(mockUrl)).called(1);
+        verify(mockLauncher.launch(
+          any,
+          useWebView: anyNamed('useWebView'),
+          enableJavaScript: anyNamed('enableJavaScript'),
+          enableDomStorage: anyNamed('enableDomStorage'),
+          useSafariVC: anyNamed('useSafariVC'),
+          headers: anyNamed('headers'),
+          universalLinksOnly: anyNamed('universalLinksOnly'),
+          webOnlyWindowName: anyNamed('webOnlyWindowName'),
+        )).called(1);
+        verifyNoMoreInteractions(mockLauncher);
+        // No SnackBar should be shown
+        await tester.pump(Duration(seconds: 1));
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(find.text("Can't open URL: LaunchException"), findsOneWidget);
+        await tester.pump(Duration(seconds: 3)); // Default duration is 4
+        await tester.pumpAndSettle();
+        verifyNever(mockNavigatorObserver.didPop(any, any));
+      });
+    }
+
+    testOpenUrl(find.text('OPEN'));
+    testOpenUrl(find.byType(SelectableLinkify));
 
     testWidgets('NEW LINK goes to the previous screen',
         (WidgetTester tester) async {

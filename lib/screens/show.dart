@@ -98,13 +98,19 @@ class ShowUrlScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 15.h),
                             SelectableLinkify(
-                              text: url,
+                              // XXX: We replace the '-' for non-breaking hyphen
+                              // as hack to avoid the text to be wrapped at '-'
+                              // because we couldn't find a more elegant way to
+                              // do char-by-char wrapping in Flutter.
+                              // This should eventually be
+                              // TextAlign.justify too.
+                              text: url.replaceAll('-', '\u2011'),
                               options: LinkifyOptions(
                                 humanize: false,
                                 defaultToHttps: true,
                                 excludeLastPeriod: false,
                               ),
-                              onOpen: (link) => _launchUrl(link.url, context),
+                              onOpen: (link) => _launchUrl(url, context),
                             ),
                           ],
                         ),
