@@ -5,12 +5,6 @@ import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:noclick_me/logo.dart';
 
 void main() {
-  // FIXME: Normally we should configure this in flutter_test_config.dart (see
-  // https://pub.dev/packages/golden_toolkit#loading-fonts) but there seems to
-  // be a bug in Flutter (beta) that is preventing us from use that approach:
-  // https://github.com/flutter/flutter/issues/72801
-  setUp(() async => await loadAppFonts());
-
   group('Logo', () {
     testGoldens('should adapt to different screens', (tester) async {
       await tester.pumpWidgetBuilder(Center(child: Logo()));
