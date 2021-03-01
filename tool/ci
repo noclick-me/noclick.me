@@ -15,9 +15,7 @@ main() {
 
 cmd_ci() {
   cmd_check
-  cmd_test_unit
-  cmd_test_goldens
-  cmd_test_special
+  cmd_test
   cmd_cov_check
 }
 
@@ -33,6 +31,12 @@ cmd_analyze() {
 cmd_format() {
   echo "Checking format..."
   flutter format -n --set-exit-if-changed lib test
+}
+
+cmd_test() {
+  cmd_test_unit
+  cmd_test_goldens
+  cmd_test_special
 }
 
 test_normal() {
