@@ -32,7 +32,7 @@ void main() {
 
     testWidgets('have all important widgets', (WidgetTester tester) async {
       await tester.pumpWidget(createForm());
-      final expandButtonFinder = find.byType(FlatButton);
+      final expandButtonFinder = find.byType(TextButton);
       final urlFieldFinder = find.byType(TextFormField);
 
       expect(expandButtonFinder, findsOneWidget);
@@ -46,7 +46,7 @@ void main() {
       testWidgets('tapping on button without input',
           (WidgetTester tester) async {
         await tester.pumpWidget(createForm());
-        final expandButton = find.byType(FlatButton);
+        final expandButton = find.byType(TextButton);
 
         await tester.tap(expandButton);
         await tester.pumpAndSettle();
@@ -65,7 +65,7 @@ void main() {
 
       testWidgets('the URL is a word', (WidgetTester tester) async {
         await tester.pumpWidget(createForm());
-        final expandButton = find.byType(FlatButton);
+        final expandButton = find.byType(TextButton);
         final urlField = find.byType(TextFormField);
 
         // Enter text auto-validates, so we should get an error as soon as we
