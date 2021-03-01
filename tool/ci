@@ -20,6 +20,7 @@ cmd_ci() {
 }
 
 cmd_check() {
+  flutter pub get
   cmd_format
   cmd_analyze
 }
