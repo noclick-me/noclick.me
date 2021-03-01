@@ -86,7 +86,7 @@ cmd_cov_check() {
 
   echo
   echo "HTML coverage report available at:"
-  echo "$PWD/coverage/html/index.html"
+  echo "file://$PWD/coverage/html/index.html"
 
   if test "$cov" -lt "$MIN_COV_PCT"
   then
