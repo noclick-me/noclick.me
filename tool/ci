@@ -72,7 +72,7 @@ cmd_test_special() {
 
 cmd_cov_check() {
   echo "Generating coverage report..."
-  genhtml coverage/*.lcov.info --output-directory coverage/html
+  genhtml coverage/*.lcov.info --no-function-coverage --output-directory coverage/html
 
   cov=$(sed -n 's|.*<td class="headerCovTableEntryHi">\([0-9]\+\)\(\.[0-9]\+\)\? %</td>.*|\1|p' coverage/html/index.html)
   r=0
