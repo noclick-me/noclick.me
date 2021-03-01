@@ -73,10 +73,10 @@ class Home extends StatelessWidget {
                       top: 0.05.sh,
                     ),
                     child: UrlForm(
-                      onSuccess: (url) => Navigator.push<ShowUrlScreen>(
+                      onSuccess: (response) => Navigator.push<ShowUrlScreen>(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ShowUrlScreen(url),
+                          builder: (context) => ShowUrlScreen(response),
                         ),
                       ),
                     ),

@@ -1,40 +1,28 @@
 import 'dart:math' show min;
 
+import 'package:duration/duration.dart' show prettyDuration;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
+import 'package:flutter_markdown/flutter_markdown.dart'
+    show MarkdownBody, MarkdownStyleSheet;
 import 'package:flutter_linkify/flutter_linkify.dart'
     show LinkifyOptions, SelectableLinkify;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart' show canLaunch, launch;
 
 import '../logo.dart' show Logo;
+import '../net.dart' show CreateUrlResponse, RateLimitInfo;
 
 class ShowUrlScreen extends StatelessWidget {
-  final String url;
+  // It would make more sense to declare our own type here, but we want to keep
+  // it pragmatic at the moment, as this screen will always really show
+  // a response to a create URL API request. We'll delay the extra layers of
+  // abstraction until this changes (if it does).
+  final CreateUrlResponse response;
 
-  const ShowUrlScreen(this.url, {Key key}) : super(key: key);
-
-  void _launchUrl(String url, BuildContext context) async {
-    String error;
-    try {
-      if (!await canLaunch(url) ||
-          !await launch(url, forceWebView: true, enableJavaScript: true)) {
-        error = "Don't know how to open this URL type";
-      }
-    } catch (e) {
-      error = "Can't open URL: ${e.message}";
-    }
-
-    if (error != null) {
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text(error),
-          ),
-        );
-    }
-  }
+  const ShowUrlScreen(this.response, {Key key})
+      : assert(response != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +64,8 @@ class ShowUrlScreen extends StatelessWidget {
                                 TextButton.icon(
                                   icon: const Icon(Icons.open_in_new),
                                   label: const Text('OPEN'),
-                                  onPressed: () => _launchUrl(url, context),
+                                  onPressed: () =>
+                                      _launchUrl(response.url, context),
                                 ),
                                 SizedBox(width: 8.w),
                                 TextButton.icon(
@@ -84,7 +73,7 @@ class ShowUrlScreen extends StatelessWidget {
                                   label: const Text('COPY'),
                                   onPressed: () async {
                                     await Clipboard.setData(
-                                        ClipboardData(text: url));
+                                        ClipboardData(text: response.url));
                                     ScaffoldMessenger.of(context)
                                       ..removeCurrentSnackBar()
                                       ..showSnackBar(
@@ -104,18 +93,28 @@ class ShowUrlScreen extends StatelessWidget {
                               // do char-by-char wrapping in Flutter.
                               // This should eventually be
                               // TextAlign.justify too.
-                              text: url.replaceAll('-', '\u2011'),
+                              text: response.url.replaceAll('-', '\u2011'),
                               options: LinkifyOptions(
                                 humanize: false,
                                 defaultToHttps: true,
                                 excludeLastPeriod: false,
                               ),
-                              onOpen: (link) => _launchUrl(url, context),
+                              onOpen: (link) =>
+                                  _launchUrl(response.url, context),
                             ),
                           ],
                         ),
                       ),
                     ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 50.h,
+                      horizontal: 25.w,
+                    ),
+                    child: response.rateLimit != null
+                        ? RateLimitMessage(response.rateLimit)
+                        : Container(),
                   ),
                 ],
               ),
@@ -124,5 +123,55 @@ class ShowUrlScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// A message to display a [RateLimitInfo].
+class RateLimitMessage extends StatelessWidget {
+  /// The [RateLimitInfo] to display.
+  final RateLimitInfo limit;
+
+  /// Creates a [RateLimitMessage].
+  ///
+  /// [limit] must be non-null.
+  const RateLimitMessage(this.limit) : assert(limit != null);
+
+  /// Shows the [limit.reset] information in a human readable form.
+  String get reset =>
+      prettyDuration(limit.reset, delimiter: ', ', conjunction: ' and ');
+
+  @override
+  Widget build(BuildContext context) => MarkdownBody(
+        onTapLink: (text, href, title) => _launchUrl(href, context),
+        styleSheet: MarkdownStyleSheet(textAlign: WrapAlignment.spaceBetween),
+        data: '''\
+There are **${limit.remaining}** requests left for today (will be reset to
+${limit.limit} in $reset. This limitation exists to keep running costs
+manageable. If you would like to see these limitations relaxed or completely
+removed, please consider [supporting
+us](https://github.com/llucax/llucax/blob/main/sponsoring-platforms.md)!''',
+      );
+}
+
+/// Opens [url] in a browser/new tab) or shows an error if it can't be opened.
+void _launchUrl(String url, BuildContext context) async {
+  String error;
+  try {
+    if (!await canLaunch(url) ||
+        !await launch(url, forceWebView: true, enableJavaScript: true)) {
+      error = "Don't know how to open this URL type";
+    }
+  } catch (e) {
+    error = "Can't open URL: $e";
+  }
+
+  if (error != null) {
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(error),
+        ),
+      );
   }
 }

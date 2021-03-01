@@ -3,11 +3,11 @@ import 'dart:async' show FutureOr;
 import 'package:flutter/material.dart' hide HttpClientProvider;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'net.dart' show NoClickService;
+import 'net.dart' show NoClickService, CreateUrlResponse;
 import 'provider/http_client_provider.dart' show HttpClientProvider;
 
 class UrlForm extends StatefulWidget {
-  final FutureOr<void> Function(String url) onSuccess;
+  final FutureOr<void> Function(CreateUrlResponse createUrlResponse) onSuccess;
   UrlForm({this.onSuccess, Key key}) : super(key: key);
 
   @override
@@ -132,15 +132,15 @@ class _UrlFormState extends State<UrlForm> {
       final service =
           NoClickService(httpClient: HttpClientProvider.of(context).client);
 
-      String url;
+      CreateUrlResponse response;
       try {
-        url = await service.createUrl(uri);
+        response = await service.createUrl(uri);
       } catch (e) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
             SnackBar(
-              content: Text('Could not retrieve the page: ${e.message}'),
+              content: Text('Could not retrieve the page: ${e}'),
             ),
           );
         _fieldFocusNode.requestFocus();
@@ -156,7 +156,7 @@ class _UrlFormState extends State<UrlForm> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       if (widget.onSuccess != null) {
-        await widget.onSuccess(url);
+        await widget.onSuccess(response);
       }
 
       setState(() => _fieldController.clear());
