@@ -10,6 +10,7 @@ import 'package:noclick_me/provider/http_client_provider.dart'
     show HttpClientProvider;
 import 'package:noclick_me/screenutil_builder.dart' show screenutilBuilder;
 
+import 'package:noclick_me/net.dart' show CreateUrlResponse;
 import 'package:noclick_me/url_form.dart';
 
 void main() {
@@ -18,7 +19,7 @@ void main() {
 
     Widget createForm(
             {MockClientHandler mockClientHandler,
-            FutureOr<void> Function(String url) onSuccess}) =>
+            FutureOr<void> Function(CreateUrlResponse response) onSuccess}) =>
         MaterialApp(
           home: Scaffold(
             body: HttpClientProvider(
@@ -134,10 +135,10 @@ void main() {
       });
 
       testWidgets('server response is not 200 OK', (WidgetTester tester) async {
-        String success_url;
+        CreateUrlResponse response;
         await tester.pumpWidget(createForm(
           mockClientHandler: (r) async => Response('BAD', 400),
-          onSuccess: (url) => success_url = url,
+          onSuccess: (r) => response = r,
         ));
 
         await tester.enterText(
@@ -147,7 +148,7 @@ void main() {
 
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pumpAndSettle(); // Wait for the new screen animation
-        expect(success_url, 'NOT OK: status=400');
+        expect(response.error, 'Unable to create new URL, status=400');
       });
 
       testWidgets('there is an unexpected exception in net',
@@ -166,7 +167,8 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pumpAndSettle(); // Wait for the SnackBar in animation
         expect(find.byType(SnackBar), findsOneWidget);
-        expect(find.text('Could not retrieve the page: $exceptionText'),
+        expect(
+            find.text('Could not retrieve the page: Exception: $exceptionText'),
             findsOneWidget);
 
         await tester.pump(Duration(seconds: 4)); // Default SnackBar duration
@@ -186,16 +188,16 @@ void main() {
         }
 
         testWidgets('for $input', (WidgetTester tester) async {
-          String success_url;
+          CreateUrlResponse response;
           await tester.pumpWidget(createForm(
             mockClientHandler: createUrlHandler,
-            onSuccess: (url) => success_url = url,
+            onSuccess: (r) => response = r,
           ));
 
           await tester.enterText(find.byType(TextFormField), input);
           await tester.testTextInput.receiveAction(TextInputAction.done);
           await tester.pumpAndSettle();
-          expect(success_url, output);
+          expect(response.url, output);
         });
       }
 

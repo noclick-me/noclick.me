@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 
-MIN_COV_PCT=${MIN_COV_PCT:-92}
+MIN_COV_PCT=${MIN_COV_PCT:-96}
 
 main() {
   # Run the ci command if none was specified
@@ -15,13 +15,12 @@ main() {
 
 cmd_ci() {
   cmd_check
-  cmd_test_unit
-  cmd_test_goldens
-  cmd_test_special
+  cmd_test
   cmd_cov_check
 }
 
 cmd_check() {
+  flutter pub get
   cmd_format
   cmd_analyze
 }
@@ -33,6 +32,12 @@ cmd_analyze() {
 cmd_format() {
   echo "Checking format..."
   flutter format -n --set-exit-if-changed lib test
+}
+
+cmd_test() {
+  cmd_test_unit
+  cmd_test_goldens
+  cmd_test_special
 }
 
 test_normal() {
@@ -67,7 +72,7 @@ cmd_test_special() {
 
 cmd_cov_check() {
   echo "Generating coverage report..."
-  genhtml coverage/*.lcov.info --output-directory coverage/html
+  genhtml coverage/*.lcov.info --no-function-coverage --output-directory coverage/html
 
   cov=$(sed -n 's|.*<td class="headerCovTableEntryHi">\([0-9]\+\)\(\.[0-9]\+\)\? %</td>.*|\1|p' coverage/html/index.html)
   r=0
@@ -81,7 +86,7 @@ cmd_cov_check() {
 
   echo
   echo "HTML coverage report available at:"
-  echo "$PWD/coverage/html/index.html"
+  echo "file://$PWD/coverage/html/index.html"
 
   if test "$cov" -lt "$MIN_COV_PCT"
   then

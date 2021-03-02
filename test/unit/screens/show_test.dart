@@ -10,6 +10,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 
 import 'package:noclick_me/screenutil_builder.dart' show screenutilBuilder;
 
+import 'package:noclick_me/net.dart' show CreateUrlResponse, RateLimitInfo;
 import 'package:noclick_me/screens/show.dart';
 
 class MockUrlLauncher extends Mock
@@ -27,13 +28,40 @@ void main() {
     final showUrlScreenApp = MaterialApp(
       navigatorObservers: [mockNavigatorObserver],
       home: screenutilBuilder(
-        child: ShowUrlScreen(mockUrl),
+        child: ShowUrlScreen(const CreateUrlResponse(url: mockUrl)),
       ),
     );
 
     setUp(() => reset(mockNavigatorObserver));
 
-    testWidgets('shows the URL', (WidgetTester tester) async {
+    test('Constructor asserts on null response', () {
+      expect(() => ShowUrlScreen(null), throwsAssertionError);
+    });
+
+    testWidgets('shows the URL (and only the URL if there is no rate limit',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(showUrlScreenApp);
+      expect(find.text(mockUrl.replaceAll('-', '\u2011')), findsOneWidget);
+      expect(find.byType(RateLimitMessage), findsNothing);
+      verifyNever(mockNavigatorObserver.didPop(any, any));
+    });
+
+    testWidgets('shows the URL and rate limit information if present',
+        (WidgetTester tester) async {
+      final showUrlScreenApp = MaterialApp(
+        navigatorObservers: [mockNavigatorObserver],
+        home: screenutilBuilder(
+          child: ShowUrlScreen(
+            const CreateUrlResponse(
+                url: mockUrl,
+                rateLimit: RateLimitInfo(
+                  limit: 10,
+                  remaining: 4,
+                  reset: Duration(seconds: 34),
+                )),
+          ),
+        ),
+      );
       await tester.pumpWidget(showUrlScreenApp);
       expect(find.text(mockUrl.replaceAll('-', '\u2011')), findsOneWidget);
       verifyNever(mockNavigatorObserver.didPop(any, any));
@@ -199,7 +227,8 @@ void main() {
         // No SnackBar should be shown
         await tester.pump(Duration(seconds: 1));
         expect(find.byType(SnackBar), findsOneWidget);
-        expect(find.text("Can't open URL: LaunchException"), findsOneWidget);
+        expect(find.text("Can't open URL: Exception: LaunchException"),
+            findsOneWidget);
         await tester.pump(Duration(seconds: 3)); // Default duration is 4
         await tester.pumpAndSettle();
         verifyNever(mockNavigatorObserver.didPop(any, any));
