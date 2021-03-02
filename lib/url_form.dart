@@ -23,14 +23,24 @@ class _UrlFormState extends State<UrlForm> {
 
   final _fieldController = TextEditingController();
 
-  FlatButton _button;
+  TextButton _button;
 
   final _fieldFocusNode = FocusNode();
 
   _UrlFormState() {
-    _button = FlatButton(
-      color: Colors.blue,
-      child: Text('Expand', style: TextStyle(color: Colors.white)),
+    final flatButtonStyle = TextButton.styleFrom(
+      primary: Colors.white,
+      backgroundColor: Colors.blue,
+      minimumSize: Size(88, 36),
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(2.0)),
+      ),
+    );
+
+    _button = TextButton(
+      style: flatButtonStyle,
+      child: Text('Expand'),
       onPressed: _submit,
     );
   }
