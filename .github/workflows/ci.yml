@@ -21,6 +21,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2 # needed by codecov sometimes
 
     - uses: actions/setup-java@v1
       with:
