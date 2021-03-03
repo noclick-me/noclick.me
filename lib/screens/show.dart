@@ -146,7 +146,7 @@ class RateLimitMessage extends StatelessWidget {
         styleSheet: MarkdownStyleSheet(textAlign: WrapAlignment.spaceBetween),
         data: '''\
 There are **${limit.remaining}** requests left for today (will be reset to
-${limit.limit} in $reset. This limitation exists to keep running costs
+${limit.limit} in $reset). This limitation exists to keep running costs
 manageable. If you would like to see these limitations relaxed or completely
 removed, please consider [supporting
 us](https://github.com/llucax/llucax/blob/main/sponsoring-platforms.md)!''',
