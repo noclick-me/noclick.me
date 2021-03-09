@@ -145,10 +145,21 @@ void main() {
           find.byType(TextFormField),
           'https://example.com',
         );
+        expect(find.byType(SnackBar), findsNothing);
 
         await tester.testTextInput.receiveAction(TextInputAction.done);
-        await tester.pumpAndSettle(); // Wait for the new screen animation
-        expect(response.error, 'Unable to create new URL, status=400');
+        await tester.pumpAndSettle(); // Wait for the SnackBar in animation
+        expect(response, isNull);
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(
+            find.text('The URL could not be expanded: '
+                'Unable to create new URL, status=400'),
+            findsOneWidget);
+
+        await tester.pump(Duration(seconds: 4)); // Default SnackBar duration
+        await tester.pumpAndSettle();
+        expect(response, isNull);
+        expect(find.byType(SnackBar), findsNothing);
       });
 
       testWidgets('there is an unexpected exception in net',
@@ -174,7 +185,7 @@ void main() {
         await tester.pump(Duration(seconds: 4)); // Default SnackBar duration
         await tester.pumpAndSettle();
         expect(find.byType(SnackBar), findsNothing);
-      }); // FIXME: I CAN'T FIND THE SNACKBAR with the error
+      });
     });
 
     group('succeeds', () {
