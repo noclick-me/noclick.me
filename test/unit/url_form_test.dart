@@ -174,7 +174,7 @@ void main() {
         await tester.pump(Duration(seconds: 4)); // Default SnackBar duration
         await tester.pumpAndSettle();
         expect(find.byType(SnackBar), findsNothing);
-      }); // FIXME: I CAN'T FIND THE SNACKBAR with the error
+      });
     });
 
     group('succeeds', () {
