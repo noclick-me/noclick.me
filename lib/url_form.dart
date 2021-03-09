@@ -153,6 +153,22 @@ class _UrlFormState extends State<UrlForm> {
         setState(() => _submitting = false);
       }
 
+      if (response.error != null) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text('The URL could not be expanded: ${response.error}'),
+            ),
+          );
+        _fieldFocusNode.requestFocus();
+        _fieldController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: _fieldController.text.length,
+        );
+        return;
+      }
+
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       if (widget.onSuccess != null) {
