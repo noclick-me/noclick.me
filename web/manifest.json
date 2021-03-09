@@ -1,11 +1,10 @@
 {
     "name": "noclick.me",
-    "short_name": "noclick.me",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Share links with more descriptive URLs",
+    "description": "Never click on a link again!",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
