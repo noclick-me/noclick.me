@@ -68,7 +68,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ android, android-arm, android-arm64, android-x64, web ]
+        target: [ android, android-arm, android-arm64, android-x64, linux, web ]
 
     steps:
     - name: Check out code
@@ -84,7 +84,22 @@ jobs:
       with:
         channel: ${{ env.FLUTTER_CHANNEL }}
 
-    - name: Install dependencies
+    - name: Enable Flutter Linux
+      if: ${{ matrix.target == 'linux' }}
+      run: flutter config --enable-linux-desktop
+
+    - name: Install pub dependencies
+      if: matrix.target == 'linux'
+      run: sudo apt-get install
+        clang
+        cmake
+        ninja-build
+        pkg-config
+        libgtk-3-dev
+        libblkid-dev
+        liblzma-dev
+
+    - name: Install Linux dependencies
       run: flutter pub get
 
     - name: Build multi-arch apk
@@ -105,6 +120,14 @@ jobs:
         mkdir -p artifacts/$TARGET
         mv build/app/outputs/flutter-apk/app-release.apk \
           artifacts/$TARGET/noclickme-$ARCH-$(git describe).apk
+
+    - name: Build linux
+      if: matrix.target == 'linux'
+      run: |
+        TARGET=${{ matrix.target }}
+        flutter build $TARGET --release
+        mkdir -p artifacts
+        mv build/linux/release/bundle artifacts/$TARGET
 
     - name: Build web
       if: matrix.target == 'web'
