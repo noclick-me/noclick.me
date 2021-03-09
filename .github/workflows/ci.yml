@@ -8,7 +8,7 @@ on:
 
 env:
   JAVA_VERSION: 12.x
-  FLUTTER_CHANNEL: beta
+  FLUTTER_CHANNEL: stable
 
 jobs:
   test:
@@ -83,10 +83,6 @@ jobs:
       uses: subosito/flutter-action@v1
       with:
         channel: ${{ env.FLUTTER_CHANNEL }}
-
-    - name: Enable Flutter web
-      if: ${{ matrix.target == 'web' }}
-      run: flutter config --enable-web
 
     - name: Install dependencies
       run: flutter pub get
