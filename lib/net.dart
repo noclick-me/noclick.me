@@ -87,6 +87,10 @@ class CreateUrlResponse {
   const CreateUrlResponse.error(this.error, {this.rateLimit})
       : assert(error != null),
         url = null;
+
+  @override
+  String toString() =>
+      '$runtimeType(url: $url, error: $error, rateLimit: $rateLimit)';
 }
 
 class NoClickService {

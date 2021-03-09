@@ -25,10 +25,24 @@ void main() {
     });
 
     test('toString()', () {
-      expect(
-          RateLimitInfo(limit: 1, remaining: 2, reset: Duration.zero)
-              .toString(),
+      final rateLimit =
+          RateLimitInfo(limit: 1, remaining: 2, reset: Duration.zero);
+      expect(rateLimit.toString(),
           'RateLimitInfo(limit: 1, remaining: 2, reset: 0:00:00.000000)');
+      expect(
+          CreateUrlResponse(url: 'https://example.com').toString(),
+          'CreateUrlResponse(url: https://example.com, error: null, '
+          'rateLimit: null)');
+      expect(
+          CreateUrlResponse.error('BAD!').toString(),
+          'CreateUrlResponse(url: null, error: BAD!, '
+          'rateLimit: null)');
+      expect(
+          CreateUrlResponse(url: 'https://example.com', rateLimit: rateLimit)
+              .toString(),
+          'CreateUrlResponse(url: https://example.com, error: null, '
+          'rateLimit: RateLimitInfo(limit: 1, remaining: 2, '
+          'reset: 0:00:00.000000))');
     });
 
     group('createUrl()', () {
