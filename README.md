@@ -47,3 +47,7 @@ be pushed, and one hook to run `flutter analyze` and `flutter test` before
 a new commit is created. The later can take some time, but it can be easily
 disabled temporarily by using `git commit --no-verify` if you are, for example,
 just changing the README file or amending a commit message.
+
+### Releasing
+
+Please have a look at the [release document](doc/RELEASE.md).
