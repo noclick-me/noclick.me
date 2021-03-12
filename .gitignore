@@ -40,3 +40,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Signing key keystore (should never be shared)
+.java-keystore.jks
