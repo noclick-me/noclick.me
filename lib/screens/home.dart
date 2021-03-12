@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../logo.dart' show Logo;
 import '../url_form.dart' show UrlForm;
 import 'show.dart' show ShowUrlScreen;
+import 'privacy_policy.dart' show PrivacyPolicyScreen;
 
 class Home extends StatelessWidget {
   const Home({Key key}) : super(key: key);
@@ -79,6 +80,36 @@ class Home extends StatelessWidget {
                           builder: (context) => ShowUrlScreen(response),
                         ),
                       ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.01.sw),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      children: <Widget>[
+                        TextButton(
+                          child: const Text('Privacy Policy'),
+                          onPressed: () => Navigator.push<ShowUrlScreen>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PrivacyPolicyScreen(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 0.02.sw),
+                        TextButton(
+                          child: const Text('Licenses'),
+                          onPressed: () => showLicensePage(
+                            context: context,
+                            applicationName: 'noclick.me',
+                            applicationIcon: SizedBox(
+                              width: 64,
+                              height: 64,
+                              child: Image.asset('assets/noclick.png'),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
