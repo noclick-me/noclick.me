@@ -13,6 +13,8 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import 'package:noclick_me/provider/http_client_provider.dart'
     show HttpClientProvider;
 import 'package:noclick_me/screens/show.dart' show ShowUrlScreen;
+import 'package:noclick_me/screens/privacy_policy.dart'
+    show PrivacyPolicyScreen;
 import 'package:noclick_me/screenutil_builder.dart' show screenutilBuilder;
 import 'package:noclick_me/url_form.dart' show UrlForm;
 
@@ -64,6 +66,28 @@ void main() {
       await tester.pumpAndSettle();
       verify(mockNavigatorObserver.didPush(any, any)).called(1);
       expect(find.byType(ShowUrlScreen), findsOneWidget);
+    });
+
+    testWidgets('shows privacy policy screen', (WidgetTester tester) async {
+      await tester.pumpWidget(createHomeScreen());
+      final privacyPolicyButton = find.text('Privacy Policy');
+
+      clearInteractions(mockNavigatorObserver);
+      await tester.tap(privacyPolicyButton);
+      await tester.pumpAndSettle();
+      verify(mockNavigatorObserver.didPush(any, any)).called(1);
+      expect(find.byType(PrivacyPolicyScreen), findsOneWidget);
+    });
+
+    testWidgets('shows licenses screen', (WidgetTester tester) async {
+      await tester.pumpWidget(createHomeScreen());
+      final licensesButton = find.text('Licenses');
+
+      clearInteractions(mockNavigatorObserver);
+      await tester.tap(licensesButton);
+      await tester.pumpAndSettle();
+      verify(mockNavigatorObserver.didPush(any, any)).called(1);
+      expect(find.byType(LicensePage), findsOneWidget);
     });
   });
 }

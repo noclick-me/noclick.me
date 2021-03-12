@@ -23,6 +23,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 2 # needed by codecov sometimes
+        submodules: true
 
     - uses: actions/setup-java@v1
       with:
@@ -73,6 +74,8 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - name: Install Java
       uses: actions/setup-java@v1

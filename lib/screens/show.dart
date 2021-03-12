@@ -8,8 +8,8 @@ import 'package:flutter_markdown/flutter_markdown.dart'
 import 'package:flutter_linkify/flutter_linkify.dart'
     show LinkifyOptions, SelectableLinkify;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart' show canLaunch, launch;
 
+import '../launch_url.dart' show launchUrl;
 import '../logo.dart' show Logo;
 import '../net.dart' show CreateUrlResponse, RateLimitInfo;
 
@@ -65,7 +65,7 @@ class ShowUrlScreen extends StatelessWidget {
                                   icon: const Icon(Icons.open_in_new),
                                   label: const Text('OPEN'),
                                   onPressed: () =>
-                                      _launchUrl(response.url, context),
+                                      launchUrl(response.url, context),
                                 ),
                                 SizedBox(width: 8.w),
                                 TextButton.icon(
@@ -100,7 +100,7 @@ class ShowUrlScreen extends StatelessWidget {
                                 excludeLastPeriod: false,
                               ),
                               onOpen: (link) =>
-                                  _launchUrl(response.url, context),
+                                  launchUrl(response.url, context),
                             ),
                           ],
                         ),
@@ -142,7 +142,7 @@ class RateLimitMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MarkdownBody(
-        onTapLink: (text, href, title) => _launchUrl(href, context),
+        onTapLink: (text, href, title) => launchUrl(href, context),
         styleSheet: MarkdownStyleSheet(textAlign: WrapAlignment.spaceBetween),
         data: '''\
 There are **${limit.remaining}** requests left for today (will be reset to
@@ -151,27 +151,4 @@ manageable. If you would like to see these limitations relaxed or completely
 removed, please consider [supporting
 us](https://github.com/llucax/llucax/blob/main/sponsoring-platforms.md)!''',
       );
-}
-
-/// Opens [url] in a browser/new tab) or shows an error if it can't be opened.
-void _launchUrl(String url, BuildContext context) async {
-  String error;
-  try {
-    if (!await canLaunch(url) ||
-        !await launch(url, forceWebView: true, enableJavaScript: true)) {
-      error = "Don't know how to open this URL type";
-    }
-  } catch (e) {
-    error = "Can't open URL: $e";
-  }
-
-  if (error != null) {
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(error),
-        ),
-      );
-  }
 }
