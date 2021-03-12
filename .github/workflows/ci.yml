@@ -106,9 +106,9 @@ jobs:
       if: matrix.target == 'android'
       run: |
         TARGET=${{ matrix.target }}
-        flutter build apk --release
+        flutter build apk --debug
         mkdir -p artifacts/$TARGET
-        mv build/app/outputs/flutter-apk/app-release.apk \
+        mv build/app/outputs/flutter-apk/app-debug.apk \
           artifacts/$TARGET/noclickme-$(git describe).apk
 
     - name: Build apk for ${{ matrix.target }}
@@ -116,9 +116,9 @@ jobs:
       run: |
         TARGET=${{ matrix.target }}
         ARCH=$(echo $TARGET | cut -d- -f2)
-        flutter build apk --target-platform $TARGET --release
+        flutter build apk --target-platform $TARGET --debug
         mkdir -p artifacts/$TARGET
-        mv build/app/outputs/flutter-apk/app-release.apk \
+        mv build/app/outputs/flutter-apk/app-debug.apk \
           artifacts/$TARGET/noclickme-$ARCH-$(git describe).apk
 
     - name: Build linux
