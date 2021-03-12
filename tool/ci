@@ -74,7 +74,7 @@ cmd_cov_check() {
   echo "Generating coverage report..."
   genhtml coverage/*.lcov.info --no-function-coverage --output-directory coverage/html
 
-  cov=$(sed -n 's|.*<td class="headerCovTableEntryHi">\([0-9]\+\)\(\.[0-9]\+\)\? %</td>.*|\1|p' coverage/html/index.html)
+  cov=$(sed -n 's@.*<td class="headerCovTableEntry\(Hi\|Med\)">\([0-9]\+\)\(\.[0-9]\+\)\? %</td>.*@\2@p' coverage/html/index.html)
   r=0
   if test "$cov" -lt "$MIN_COV_PCT"
   then
