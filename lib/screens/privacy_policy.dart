@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart'
     show Markdown, MarkdownStyleSheet;
-import 'package:url_launcher/url_launcher.dart' show canLaunch, launch;
+
+import '../launch_url.dart' show launchUrl;
 
 /// Shows a Privacy Policy Screen.
 class PrivacyPolicyScreen extends StatelessWidget {
@@ -29,7 +30,7 @@ class PrivacyPolicy extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Markdown(
-              onTapLink: (text, href, title) => _launchUrl(href, context),
+              onTapLink: (text, href, title) => launchUrl(href, context),
               styleSheet:
                   MarkdownStyleSheet(textAlign: WrapAlignment.spaceBetween),
               data: snapshot.data,
@@ -43,27 +44,4 @@ class PrivacyPolicy extends StatelessWidget {
           return CircularProgressIndicator();
         },
       );
-}
-
-/// Opens [url] in a browser/new tab) or shows an error if it can't be opened.
-void _launchUrl(String url, BuildContext context) async {
-  String error;
-  try {
-    if (!await canLaunch(url) ||
-        !await launch(url, forceWebView: true, enableJavaScript: true)) {
-      error = "Don't know how to open this URL type";
-    }
-  } catch (e) {
-    error = "Can't open URL: $e";
-  }
-
-  if (error != null) {
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(error),
-        ),
-      );
-  }
 }
