@@ -29,7 +29,7 @@ This project is written in [Flutter](https://flutter.dev/). Once you have
 a working Flutter SDK installed, you can build it with `flutter build` and try
 it out with `flutter run`.
 
-## Git Hooks
+### Git Hooks
 
 This repository provides some useful Git hooks to make sure new commits have
 some basic health.
@@ -47,3 +47,7 @@ be pushed, and one hook to run `flutter analyze` and `flutter test` before
 a new commit is created. The later can take some time, but it can be easily
 disabled temporarily by using `git commit --no-verify` if you are, for example,
 just changing the README file or amending a commit message.
+
+### Releasing
+
+Please have a look at the [release document](doc/RELEASE.md).
