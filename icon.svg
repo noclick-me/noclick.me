@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   viewBox="0 0 1023.9999 1024"
+   version="1.1"
+   sodipodi:docname="no-click.svg"
+   width="1024"
+   height="1024"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <defs
+     id="defs889" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1916"
+     inkscape:window-height="1010"
+     id="namedview887"
+     showgrid="false"
+     scale-x="1"
+     units="px"
+     inkscape:zoom="0.5"
+     inkscape:cx="52.044107"
+     inkscape:cy="654.75"
+     inkscape:window-x="0"
+     inkscape:window-y="48"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <g
+     id="layer1"
+     transform="matrix(47.0786,0,0,42.672032,111.82463,-30769.848)">
+    <g
+       id="g1563"
+       transform="matrix(0.23944,0,0,0.23944,94.337,797.27)">
+      <path
+         id="path1565"
+         style="fill:#fefefe"
+         d="m -368.99,-226.1 v -9 h -4 v -8 h -4 v -8 h -4 v -9 h -5 v -4 h -4 v -8 h 9 v 4 h 4 v 12 h 4 v -54 h 8 v 38 h 4 v -17 h 9 v 17 h 4 v -13 h 8 v 17 h 4 v -13 h 5 v 5 h 4 v 29 h -4 v 12 h -5 v 9 z" />
+      <path
+         id="path1567"
+         style="fill:#000000"
+         d="m -372.99,-222.1 v -13 h -4 v -8 h -4 v -8 h -5 v -9 h -4 v -4 h -4 v -12 h 13 v 4 h 4 v -38 h 4 v -4 h 8 v 4 h 4 v 17 h 9 v 4 h 12 v 4 h 9 v 4 h 4 v 5 h 4 v 29 h -4 v 12 h -4 v 13 z m 37,-4 v -9 h 5 v -12 h 4 v -29 h -4 v -5 h -5 v 13 h -4 v -17 h -8 v 13 h -4 v -17 h -9 v 17 h -4 v -38 h -8 v 54 h -4 v -12 h -4 v -4 h -9 v 8 h 4 v 4 h 5 v 9 h 4 v 8 h 4 v 8 h 4 v 9 z" />
+    </g>
+  </g>
+  <metadata
+     id="metadata884">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2011-04-06T19:30:10</dc:date>
+        <dc:description>Simple mouse pointer for web designers :)</dc:description>
+        <dc:source>https://openclipart.org/detail/131491/mouse-pointer-by-user9-131491</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>user9</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>cursor</rdf:li>
+            <rdf:li>finger</rdf:li>
+            <rdf:li>hand</rdf:li>
+            <rdf:li>hyperlink</rdf:li>
+            <rdf:li>link</rdf:li>
+            <rdf:li>mouse</rdf:li>
+            <rdf:li>pointer</rdf:li>
+            <rdf:li>pointing</rdf:li>
+            <rdf:li>web pointer</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#ff0000;stroke:#ff0000;stroke-width:47.9694px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.999946"
+     d="M 59.01719,101.96077 964.98281,922.03923"
+     id="path893" />
+  <path
+     style="fill:#ff0000;stroke:#ff0000;stroke-width:48.047px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.999946"
+     d="M 964.99392,100.64308 59.00608,923.35692"
+     id="path893-1" />
+</svg>
