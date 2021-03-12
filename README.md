@@ -29,7 +29,7 @@ This project is written in [Flutter](https://flutter.dev/). Once you have
 a working Flutter SDK installed, you can build it with `flutter build` and try
 it out with `flutter run`.
 
-## Git Hooks
+### Git Hooks
 
 This repository provides some useful Git hooks to make sure new commits have
 some basic health.
