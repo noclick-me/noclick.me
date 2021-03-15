@@ -91,6 +91,11 @@ jobs:
       if: ${{ matrix.target == 'linux' }}
       run: flutter config --enable-linux-desktop
 
+    - name: Install Web dependencies
+      if: matrix.target == 'web'
+      run: sudo apt-get install
+        pandoc
+
     - name: Install Linux dependencies
       if: matrix.target == 'linux'
       run: sudo apt-get install
@@ -136,7 +141,7 @@ jobs:
       if: matrix.target == 'web'
       run: |
         TARGET=${{ matrix.target }}
-        flutter build $TARGET --release
+        tool/ci build_${TARGET}
         mkdir -p artifacts
         mv build/web artifacts/$TARGET
 

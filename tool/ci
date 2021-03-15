@@ -13,6 +13,17 @@ main() {
   done
 }
 
+cmd_build() {
+  cmd_build_web
+}
+
+cmd_build_web() {
+  flutter build web --release
+  pandoc --from markdown --to html --standalone \
+    --metadata "title=noclick.me - Privacy Policy" \
+    doc/legal/privacy.md > build/web/privacy.html
+}
+
 cmd_ci() {
   cmd_check
   cmd_test
