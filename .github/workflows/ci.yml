@@ -91,7 +91,7 @@ jobs:
       if: ${{ matrix.target == 'linux' }}
       run: flutter config --enable-linux-desktop
 
-    - name: Install pub dependencies
+    - name: Install Linux dependencies
       if: matrix.target == 'linux'
       run: sudo apt-get install
         clang
@@ -102,7 +102,7 @@ jobs:
         libblkid-dev
         liblzma-dev
 
-    - name: Install Linux dependencies
+    - name: Install pub dependencies
       run: flutter pub get
 
     - name: Build multi-arch apk
