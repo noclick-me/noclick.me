@@ -1,8 +1,10 @@
 import 'dart:math' show min;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../logo.dart' show Logo;
+import '../markdown_asset.dart' show MarkdownAsset;
 import '../url_form.dart' show UrlForm;
 import 'show.dart' show ShowUrlScreen;
 import 'privacy_policy.dart' show PrivacyPolicyScreen;
@@ -83,7 +85,29 @@ class Home extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 0.01.sw),
+                    padding: EdgeInsets.only(top: 0.02.sw),
+                    child: MarkdownAsset(
+                      location: 'doc/sponsoring.md',
+                      textAlign: WrapAlignment.center,
+                      standalone: false,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.008.sw),
+                    // MouseRegion is just a hack to get a nice mouse
+                    // pointer until this issue is fixed:
+                    // https://github.com/flutter/flutter_markdown/issues/233
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: MarkdownAsset(
+                        location: 'doc/sponsoring-badges.md',
+                        textAlign: WrapAlignment.center,
+                        standalone: false,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.02.sw),
                     child: Wrap(
                       alignment: WrapAlignment.center,
                       children: <Widget>[

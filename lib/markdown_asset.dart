@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart'
-    show Markdown, MarkdownStyleSheet;
+import 'package:flutter/rendering.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'launch_url.dart' show launchUrl;
 
@@ -9,9 +9,21 @@ class MarkdownAsset extends StatelessWidget {
   /// The location of the markdown asset to show.
   final String location;
 
+  /// If true it will include padding or scrolling behavior.
+  final bool standalone;
+
+  /// The alignment of the markdown text.
+  final WrapAlignment textAlign;
+
   /// Creates a new markdown widget from [location].
-  const MarkdownAsset({@required this.location, Key key})
+  const MarkdownAsset(
+      {@required this.location,
+      this.standalone = true,
+      this.textAlign = WrapAlignment.spaceBetween,
+      Key key})
       : assert(location != null),
+        assert(standalone != null),
+        assert(textAlign != null),
         super(key: key);
 
   @override
@@ -19,11 +31,20 @@ class MarkdownAsset extends StatelessWidget {
         future: DefaultAssetBundle.of(context).loadString(location),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Markdown(
-              onTapLink: (text, href, title) => launchUrl(href, context),
-              styleSheet:
-                  MarkdownStyleSheet(textAlign: WrapAlignment.spaceBetween),
+            final style = MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(textAlign: textAlign);
+
+            if (standalone) {
+              return Markdown(
+                data: snapshot.data,
+                styleSheet: style,
+                onTapLink: (text, href, title) => launchUrl(href, context),
+              );
+            }
+            return MarkdownBody(
               data: snapshot.data,
+              styleSheet: style,
+              onTapLink: (text, href, title) => launchUrl(href, context),
             );
           } else if (snapshot.hasError) {
             return Padding(
