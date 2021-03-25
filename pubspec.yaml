@@ -32,8 +32,11 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/badges/
     - assets/noclick.png
     - doc/legal/privacy.md
+    - doc/sponsoring.md
+    - doc/sponsoring-badges.md
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

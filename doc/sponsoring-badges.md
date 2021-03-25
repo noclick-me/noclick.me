@@ -1,0 +1,6 @@
+[![GitHub Sponsors](resource:assets/badges/GitHub-Sponsors.png)](https://github.com/sponsors/llucax)
+[![Liberapay](resource:assets/badges/Liberapay.png)](https://liberapay.com/llucax/donate)
+[![Paypal](resource:assets/badges/Paypal.png)](https://www.paypal.com/donate?hosted_button_id=UZRR3REUC4SY2)
+[![Buy Me A Coffee](resource:assets/badges/Buy-Me-A-Coffee.png)](https://www.buymeacoffee.com/llucax)
+[![Patreon](resource:assets/badges/Patreon.png)](https://www.patreon.com/llucax)
+[![Flattr](resource:assets/badges/Flattr.png)](https://flattr.com/@llucax)
