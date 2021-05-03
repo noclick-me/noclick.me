@@ -2,11 +2,12 @@ import 'dart:math' show min;
 
 import 'package:duration/duration.dart' show prettyDuration;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:flutter_markdown/flutter_markdown.dart'
     show MarkdownBody, MarkdownStyleSheet;
 import 'package:flutter_linkify/flutter_linkify.dart'
-    show LinkifyOptions, SelectableLinkify;
+    show LinkifyOptions, Linkify;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../launch_url.dart' show launchUrl;
@@ -86,21 +87,24 @@ class ShowUrlScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: 15.h),
-                            SelectableLinkify(
-                              // XXX: We replace the '-' for non-breaking hyphen
-                              // as hack to avoid the text to be wrapped at '-'
-                              // because we couldn't find a more elegant way to
-                              // do char-by-char wrapping in Flutter.
-                              // This should eventually be
-                              // TextAlign.justify too.
-                              text: response.url.replaceAll('-', '\u2011'),
-                              options: LinkifyOptions(
-                                humanize: false,
-                                defaultToHttps: true,
-                                excludeLastPeriod: false,
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Linkify(
+                                // XXX: We replace the '-' for non-breaking hyphen
+                                // as hack to avoid the text to be wrapped at '-'
+                                // because we couldn't find a more elegant way to
+                                // do char-by-char wrapping in Flutter.
+                                // This should eventually be
+                                // TextAlign.justify too.
+                                text: response.url.replaceAll('-', '\u2011'),
+                                options: LinkifyOptions(
+                                  humanize: false,
+                                  defaultToHttps: true,
+                                  excludeLastPeriod: false,
+                                ),
+                                onOpen: (link) =>
+                                    launchUrl(response.url, context),
                               ),
-                              onOpen: (link) =>
-                                  launchUrl(response.url, context),
                             ),
                           ],
                         ),

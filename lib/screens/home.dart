@@ -1,4 +1,4 @@
-import 'dart:math' show min;
+import 'dart:math' show max, min;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -120,7 +120,7 @@ class Home extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 0.02.sw),
+                        SizedBox(width: max(12.0, min(27.0, 0.02.sw))),
                         TextButton(
                           child: const Text('Licenses'),
                           onPressed: () => showLicensePage(
