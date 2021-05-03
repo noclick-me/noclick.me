@@ -125,7 +125,7 @@ class NoClickService {
       print('Mocking response: ${MOCK_RESPONSE}');
       return MOCK_RESPONSE;
     }
-    final response = await httpClient.post('$_serverUrl/url',
+    final response = await httpClient.post(Uri.parse('$_serverUrl/url'),
         headers: {
           'Content-type': 'application/json',
         },
