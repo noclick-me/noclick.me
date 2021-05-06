@@ -7,8 +7,8 @@ import 'net.dart' show NoClickService, CreateUrlResponse;
 import 'provider/http_client_provider.dart' show HttpClientProvider;
 
 class UrlForm extends StatefulWidget {
-  final FutureOr<void> Function(CreateUrlResponse createUrlResponse) onSuccess;
-  UrlForm({this.onSuccess, Key key}) : super(key: key);
+  final FutureOr<void> Function(CreateUrlResponse createUrlResponse)? onSuccess;
+  UrlForm({this.onSuccess, Key? key}) : super(key: key);
 
   @override
   _UrlFormState createState() => _UrlFormState();
@@ -19,15 +19,33 @@ class _UrlFormState extends State<UrlForm> {
 
   bool _submitting = false;
 
-  TextFormField _field;
-
   final _fieldController = TextEditingController();
 
-  TextButton _button;
+  late final TextFormField _field;
+
+  late final TextButton _button;
 
   final _fieldFocusNode = FocusNode();
 
   _UrlFormState() {
+    _field = TextFormField(
+      // XXX: this is supposed to be created automatically according to the
+      // documentation, but for some reason it is null if I don't create it
+      controller: _fieldController,
+      autocorrect: false,
+      focusNode: _fieldFocusNode,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      keyboardType: TextInputType.url,
+      autofocus: true,
+      readOnly: _submitting,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'URL to expand',
+      ),
+      validator: _validator,
+      onEditingComplete: _submit,
+    );
+
     final flatButtonStyle = TextButton.styleFrom(
       primary: Colors.white,
       backgroundColor: Colors.blue,
@@ -102,8 +120,8 @@ class _UrlFormState extends State<UrlForm> {
     return uri;
   }
 
-  String _validator(String value) {
-    final dynamic url = _fixAndValidateHttpishUrl(value);
+  String? _validator(String? value) {
+    final dynamic url = _fixAndValidateHttpishUrl(value!);
     if (url is String) return url;
     assert(url is Uri);
     return null;
@@ -112,7 +130,7 @@ class _UrlFormState extends State<UrlForm> {
   void _submit() async {
     // Validate returns true if the form is valid, or false
     // otherwise.
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       final dynamic res = _fixAndValidateHttpishUrl(_fieldController.text);
       assert(res is Uri);
       final uri = res as Uri;
@@ -130,7 +148,7 @@ class _UrlFormState extends State<UrlForm> {
         );
 
       final service =
-          NoClickService(httpClient: HttpClientProvider.of(context).client);
+          NoClickService(httpClient: HttpClientProvider.of(context)!.client);
 
       CreateUrlResponse response;
       try {
@@ -172,46 +190,26 @@ class _UrlFormState extends State<UrlForm> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       if (widget.onSuccess != null) {
-        await widget.onSuccess(response);
+        await widget.onSuccess!(response);
       }
 
       setState(() => _fieldController.clear());
-      _formKey.currentState.reset();
+      _formKey.currentState!.reset();
       _fieldFocusNode.requestFocus();
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    _field = TextFormField(
-      // XXX: this is supposed to be created automatically according to the
-      // documentation, but for some reason it is null if I don't create it
-      controller: _fieldController,
-      autocorrect: false,
-      focusNode: _fieldFocusNode,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      keyboardType: TextInputType.url,
-      autofocus: true,
-      readOnly: _submitting,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'URL to expand',
-      ),
-      validator: _validator,
-      onEditingComplete: _submit,
-    );
-
-    return Container(
-      child: Form(
-        key: _formKey,
-        child: LayoutBuilder(
-          builder: (context, constraints) => _isNarrow(constraints)
-              ? _NarrowUrlForm(_field, _button)
-              : _WideUrlForm(_field, _button),
+  Widget build(BuildContext context) => Container(
+        child: Form(
+          key: _formKey,
+          child: LayoutBuilder(
+            builder: (context, constraints) => _isNarrow(constraints)
+                ? _NarrowUrlForm(_field, _button)
+                : _WideUrlForm(_field, _button),
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _NarrowUrlForm extends StatelessWidget {

@@ -10,19 +10,19 @@ import 'show.dart' show ShowUrlScreen;
 import 'privacy_policy.dart' show PrivacyPolicyScreen;
 
 class Home extends StatelessWidget {
-  const Home({Key key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final topPadding = SizedBox(height: 0.04.sh);
 
     double adapt({
-      num current,
-      num atMost,
-      num smallerThan,
-      double thenUse,
-      double andUse,
-      num ifBiggerThan,
+      required num current,
+      required num smallerThan,
+      required double thenUse,
+      required double andUse,
+      required num ifBiggerThan,
+      num? atMost,
     }) {
       final minPixels = smallerThan;
       final maxPixels = ifBiggerThan;

@@ -5,10 +5,6 @@ import 'package:noclick_me/markdown_asset.dart';
 
 void main() {
   group('MarkdownAsset', () {
-    test('constructor asserts on bad arguments', () {
-      expect(() => MarkdownAsset(location: null), throwsAssertionError);
-    });
-
     testWidgets('invalid asset shows error', (WidgetTester tester) async {
       await tester.pumpWidget(
         Directionality(

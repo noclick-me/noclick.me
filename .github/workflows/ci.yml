@@ -33,14 +33,12 @@ jobs:
       with:
         channel: ${{ env.FLUTTER_CHANNEL }}
 
-    - name: Install dependencies
-      run: flutter pub get
+    - name: Setup
+      run: tool/ci setup
 
-    - name: Analyze
+    - name: Static checks
       if: matrix.type == 'static'
-      uses: zgosalvez/github-actions-analyze-flutter@v1
-      with:
-        fail-on-warnings: true
+      run: tool/ci check
 
     - name: Run ${{ matrix.type }} tests
       if: matrix.type != 'static'

@@ -4,11 +4,8 @@ import 'package:flutter/material.dart' hide HttpClientProvider;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' show Response;
 import 'package:http/testing.dart' show MockClient, MockClientHandler;
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart'
-    show MockPlatformInterfaceMixin;
-import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart'
-    show UrlLauncherPlatform;
 
 import 'package:noclick_me/provider/http_client_provider.dart'
     show HttpClientProvider;
@@ -20,23 +17,24 @@ import 'package:noclick_me/url_form.dart' show UrlForm;
 
 import 'package:noclick_me/screens/home.dart';
 
-class MockUrlLauncher extends Mock
-    with MockPlatformInterfaceMixin
-    implements UrlLauncherPlatform {}
+import 'home_test.mocks.dart';
 
-class MockNavigatorObserver extends Mock implements NavigatorObserver {}
-
+// TODO: remove returnNullOnMissingStub
+@GenerateMocks([], customMocks: [
+  MockSpec<NavigatorObserver>(returnNullOnMissingStub: true),
+])
 void main() {
   group('Home', () {
     final mockNavigatorObserver = MockNavigatorObserver();
 
     Widget createHomeScreen(
-            {MockClientHandler mockClientHandler,
-            FutureOr<void> Function(String url) onSuccess}) =>
+            {MockClientHandler? mockClientHandler,
+            FutureOr<void> Function(String url)? onSuccess}) =>
         MaterialApp(
           navigatorObservers: [mockNavigatorObserver],
           home: HttpClientProvider(
-            client: MockClient(mockClientHandler ?? (r) => null),
+            client:
+                MockClient(mockClientHandler ?? ((r) => Future.value(null))),
             child: screenutilBuilder(
               child: Home(),
             ),

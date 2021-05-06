@@ -25,13 +25,27 @@ cmd_build_web() {
 }
 
 cmd_ci() {
+  cmd_setup
   cmd_check
   cmd_test
   cmd_cov_check
 }
 
-cmd_check() {
+cmd_setup() {
+  cmd_get_deps
+  cmd_gen_mocks
+}
+
+cmd_get_deps() {
   flutter pub get
+}
+
+cmd_gen_mocks() {
+  echo "Generating mocks..."
+  flutter pub run build_runner build
+}
+
+cmd_check() {
   cmd_format
   cmd_analyze
 }
@@ -61,17 +75,17 @@ test_normal() {
 }
 
 cmd_test_unit() {
-  echo "Running unit tests"
+  echo "Running unit tests..."
   test_normal test/unit
 }
 
 cmd_test_goldens() {
-  echo "Running goldens tests"
+  echo "Running goldens tests..."
   test_normal test/goldens
 }
 
 cmd_test_special() {
-  echo "Running special tests"
+  echo "Running special tests..."
   (
   shopt -s nullglob
   for t in test/special/*

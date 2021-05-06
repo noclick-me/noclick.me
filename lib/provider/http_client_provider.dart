@@ -4,14 +4,12 @@ import 'package:http/http.dart' as http;
 class HttpClientProvider extends InheritedWidget {
   final http.Client client;
   const HttpClientProvider({
-    Key key,
-    @required this.client,
-    @required Widget child,
-  })  : assert(client != null),
-        assert(child != null),
-        super(key: key, child: child);
+    Key? key,
+    required this.client,
+    required Widget child,
+  }) : super(key: key, child: child);
 
-  static HttpClientProvider of(BuildContext context) =>
+  static HttpClientProvider? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<HttpClientProvider>();
 
   @override
