@@ -26,6 +26,7 @@ coverage/
 .pub-cache/
 .pub/
 /build/
+test/**/*.mocks.dart
 
 # Web related
 lib/generated_plugin_registrant.dart

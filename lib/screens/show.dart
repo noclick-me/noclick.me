@@ -21,9 +21,7 @@ class ShowUrlScreen extends StatelessWidget {
   // abstraction until this changes (if it does).
   final CreateUrlResponse response;
 
-  const ShowUrlScreen(this.response, {Key key})
-      : assert(response != null),
-        super(key: key);
+  const ShowUrlScreen(this.response, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +64,7 @@ class ShowUrlScreen extends StatelessWidget {
                                   icon: const Icon(Icons.open_in_new),
                                   label: const Text('OPEN'),
                                   onPressed: () =>
-                                      launchUrl(response.url, context),
+                                      launchUrl(response.url!, context),
                                 ),
                                 SizedBox(width: 8.w),
                                 TextButton.icon(
@@ -96,14 +94,14 @@ class ShowUrlScreen extends StatelessWidget {
                                 // do char-by-char wrapping in Flutter.
                                 // This should eventually be
                                 // TextAlign.justify too.
-                                text: response.url.replaceAll('-', '\u2011'),
+                                text: response.url!.replaceAll('-', '\u2011'),
                                 options: LinkifyOptions(
                                   humanize: false,
                                   defaultToHttps: true,
                                   excludeLastPeriod: false,
                                 ),
                                 onOpen: (link) =>
-                                    launchUrl(response.url, context),
+                                    launchUrl(response.url!, context),
                               ),
                             ),
                           ],
@@ -117,7 +115,7 @@ class ShowUrlScreen extends StatelessWidget {
                       horizontal: 25.w,
                     ),
                     child: response.rateLimit != null
-                        ? RateLimitMessage(response.rateLimit)
+                        ? RateLimitMessage(response.rateLimit!)
                         : Container(),
                   ),
                 ],
@@ -138,7 +136,7 @@ class RateLimitMessage extends StatelessWidget {
   /// Creates a [RateLimitMessage].
   ///
   /// [limit] must be non-null.
-  const RateLimitMessage(this.limit) : assert(limit != null);
+  const RateLimitMessage(this.limit);
 
   /// Shows the [limit.reset] information in a human readable form.
   String get reset =>
@@ -146,7 +144,7 @@ class RateLimitMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MarkdownBody(
-        onTapLink: (text, href, title) => launchUrl(href, context),
+        onTapLink: (text, href, title) => launchUrl(href!, context),
         styleSheet: MarkdownStyleSheet(textAlign: WrapAlignment.spaceBetween),
         data: '''\
 There are **${limit.remaining}** requests left for today (will be reset to

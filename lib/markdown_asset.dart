@@ -17,14 +17,11 @@ class MarkdownAsset extends StatelessWidget {
 
   /// Creates a new markdown widget from [location].
   const MarkdownAsset(
-      {@required this.location,
+      {required this.location,
       this.standalone = true,
       this.textAlign = WrapAlignment.spaceBetween,
-      Key key})
-      : assert(location != null),
-        assert(standalone != null),
-        assert(textAlign != null),
-        super(key: key);
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) => FutureBuilder<String>(
@@ -36,13 +33,13 @@ class MarkdownAsset extends StatelessWidget {
 
             if (standalone) {
               return Markdown(
-                data: snapshot.data,
+                data: snapshot.data!,
                 styleSheet: style,
                 onTapLink: (text, href, title) => launchUrl(href, context),
               );
             }
             return MarkdownBody(
-              data: snapshot.data,
+              data: snapshot.data!,
               styleSheet: style,
               onTapLink: (text, href, title) => launchUrl(href, context),
             );

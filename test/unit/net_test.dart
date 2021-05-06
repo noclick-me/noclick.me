@@ -7,21 +7,10 @@ import 'package:noclick_me/net.dart';
 void main() {
   group('NoClickService', () {
     test('constructors', () {
-      final client = MockClient((req) => null);
+      final client = MockClient((req) => Future.value(null));
       final service = NoClickService(httpClient: client);
       expect(service.serverUrl, Uri.parse(NoClickService.SERVER_URL_DEFAULT));
       expect(service.httpClient, same(client));
-      expect(() => NoClickService(httpClient: null), throwsAssertionError);
-      expect(() => CreateUrlResponse(url: null), throwsAssertionError);
-      expect(() => CreateUrlResponse.error(null), throwsAssertionError);
-      expect(
-          () => RateLimitInfo(limit: null, remaining: 1, reset: Duration.zero),
-          throwsAssertionError);
-      expect(
-          () => RateLimitInfo(limit: 1, remaining: null, reset: Duration.zero),
-          throwsAssertionError);
-      expect(() => RateLimitInfo(limit: 1, remaining: 1, reset: null),
-          throwsAssertionError);
     });
 
     test('toString()', () {
@@ -50,9 +39,9 @@ void main() {
       final noclickUrl = 'https://some.long/url';
 
       Map<String, String> limits({
-        String limit,
-        String remaining,
-        String reset,
+        String? limit,
+        String? remaining,
+        String? reset,
       }) {
         final r = <String, String>{};
         if (limit != null) r['x-ratelimit-limit'] = limit;
@@ -84,16 +73,18 @@ void main() {
       });
 
       test('OK, with ratelimit', () async {
-        var client = MockClient(
+        final client = MockClient(
           (req) async => http.Response('{"noclick_url": "$noclickUrl"}', 200,
               headers: limits(limit: '10', remaining: '123', reset: '10')),
         );
-        var response = await NoClickService(httpClient: client).createUrl(url);
+        final response =
+            await NoClickService(httpClient: client).createUrl(url);
         expect(response.url, noclickUrl);
         expect(response.error, isNull);
-        expect(response.rateLimit.limit, 10);
-        expect(response.rateLimit.remaining, 123);
-        expect(response.rateLimit.reset, Duration(seconds: 10));
+        final rateLimit = response.rateLimit!;
+        expect(rateLimit.limit, 10);
+        expect(rateLimit.remaining, 123);
+        expect(rateLimit.reset, Duration(seconds: 10));
       });
 
       test('BAD, with ratelimit', () async {
@@ -104,28 +95,31 @@ void main() {
         var response = await NoClickService(httpClient: client).createUrl(url);
         expect(response.url, isNull);
         expect(response.error, 'Unable to create new URL, status=400');
-        expect(response.rateLimit.limit, 10);
-        expect(response.rateLimit.remaining, 123);
-        expect(response.rateLimit.reset, Duration(seconds: 10));
+        final rateLimit = response.rateLimit!;
+        expect(rateLimit.limit, 10);
+        expect(rateLimit.remaining, 123);
+        expect(rateLimit.reset, Duration(seconds: 10));
       });
 
       test('OK, with missing ratelimit values', () async {
-        var client = MockClient(
+        final client = MockClient(
           (req) async => http.Response('{"noclick_url": "$noclickUrl"}', 200,
               headers: limits(limit: '10', reset: '10')),
         );
-        var response = await NoClickService(httpClient: client).createUrl(url);
+        final response =
+            await NoClickService(httpClient: client).createUrl(url);
         expect(response.url, noclickUrl);
         expect(response.error, isNull);
         expect(response.rateLimit, isNull);
       });
 
       test('OK, with wrong ratelimit values', () async {
-        var client = MockClient(
+        final client = MockClient(
           (req) async => http.Response('{"noclick_url": "$noclickUrl"}', 200,
               headers: limits(limit: '10', remaining: 'not many', reset: '10')),
         );
-        var response = await NoClickService(httpClient: client).createUrl(url);
+        final response =
+            await NoClickService(httpClient: client).createUrl(url);
         expect(response.url, noclickUrl);
         expect(response.error, isNull);
         expect(response.rateLimit, isNull);

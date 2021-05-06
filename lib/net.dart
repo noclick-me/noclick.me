@@ -1,5 +1,4 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
-import 'package:meta/meta.dart' show required;
 import 'package:http/http.dart' as http;
 
 /// Information about current rate limits.
@@ -19,12 +18,10 @@ class RateLimitInfo {
   ///
   /// All arguments should be non-null.
   const RateLimitInfo({
-    @required this.limit,
-    @required this.remaining,
-    @required this.reset,
-  })  : assert(limit != null),
-        assert(remaining != null),
-        assert(reset != null);
+    required this.limit,
+    required this.remaining,
+    required this.reset,
+  });
 
   @override
   String toString() => '$runtimeType(limit: $limit, remaining: $remaining, '
@@ -40,9 +37,9 @@ class RateLimitInfo {
 /// After assigning all values, just call [finish] to get the valid
 /// [RateLimitInfo] or null if it's invalid.
 class _RateLimitInfoBuilder {
-  int limit;
-  int remaining;
-  Duration reset;
+  int? limit;
+  int? remaining;
+  Duration? reset;
   _RateLimitInfoBuilder({
     this.limit,
     this.remaining,
@@ -52,8 +49,8 @@ class _RateLimitInfoBuilder {
   /// Returns the built [RateLimitInfo].
   ///
   /// If any field is missing, then it returns null.
-  RateLimitInfo finish() => limit != null && remaining != null && reset != null
-      ? RateLimitInfo(limit: limit, remaining: remaining, reset: reset)
+  RateLimitInfo? finish() => limit != null && remaining != null && reset != null
+      ? RateLimitInfo(limit: limit!, remaining: remaining!, reset: reset!)
       : null;
 }
 
@@ -62,31 +59,29 @@ class CreateUrlResponse {
   /// The created URL.
   ///
   /// Can be null if [error] is non-null.
-  final String url;
+  final String? url;
 
   /// An error trying to create the URL.
   ///
   /// Is null if there was no error creating the URL.
-  final String error;
+  final String? error;
 
   /// Rate limit information associated with the response.
   ///
   /// Can be null if there was no rate limit information.
-  final RateLimitInfo rateLimit;
+  final RateLimitInfo? rateLimit;
 
   /// Creates a successful [CreateUrlResponse].
   ///
   /// [url] can't be null and [error] will be set to null.
-  const CreateUrlResponse({@required this.url, this.rateLimit})
-      : assert(url != null),
-        error = null;
+  const CreateUrlResponse({required String this.url, this.rateLimit})
+      : error = null;
 
   /// Creates an failed [CreateUrlResponse].
   ///
   /// [error] can't be null and [url] will be set to null.
-  const CreateUrlResponse.error(this.error, {this.rateLimit})
-      : assert(error != null),
-        url = null;
+  const CreateUrlResponse.error(String this.error, {this.rateLimit})
+      : url = null;
 
   @override
   String toString() =>
@@ -113,9 +108,8 @@ class NoClickService {
 
   final http.Client httpClient;
 
-  NoClickService({@required this.httpClient, Uri serverUrl})
-      : assert(httpClient != null),
-        _serverUrl = serverUrl ??
+  NoClickService({required this.httpClient, Uri? serverUrl})
+      : _serverUrl = serverUrl ??
             Uri.parse(const String.fromEnvironment(SERVER_URL_VAR_NAME,
                 defaultValue: SERVER_URL_DEFAULT));
 
@@ -138,15 +132,15 @@ class NoClickService {
     final rateLimit = _RateLimitInfoBuilder();
     try {
       if (response.headers.containsKey('x-ratelimit-limit')) {
-        rateLimit.limit = int.parse(response.headers['x-ratelimit-limit']);
+        rateLimit.limit = int.parse(response.headers['x-ratelimit-limit']!);
       }
       if (response.headers.containsKey('x-ratelimit-remaining')) {
         rateLimit.remaining =
-            int.parse(response.headers['x-ratelimit-remaining']);
+            int.parse(response.headers['x-ratelimit-remaining']!);
       }
       if (response.headers.containsKey('x-ratelimit-reset')) {
-        rateLimit.reset =
-            Duration(seconds: int.parse(response.headers['x-ratelimit-reset']));
+        rateLimit.reset = Duration(
+            seconds: int.parse(response.headers['x-ratelimit-reset']!));
       }
     } on FormatException {
       // Ignore, even when this shouldn't happen, is not something the user have

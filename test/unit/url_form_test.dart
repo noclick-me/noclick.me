@@ -18,12 +18,13 @@ void main() {
     const errorMsg = 'Please enter a valid http/https internet URL';
 
     Widget createForm(
-            {MockClientHandler mockClientHandler,
-            FutureOr<void> Function(CreateUrlResponse response) onSuccess}) =>
+            {MockClientHandler? mockClientHandler,
+            FutureOr<void> Function(CreateUrlResponse response)? onSuccess}) =>
         MaterialApp(
           home: Scaffold(
             body: HttpClientProvider(
-              client: MockClient(mockClientHandler ?? (r) => null),
+              client:
+                  MockClient(mockClientHandler ?? ((r) => Future.value(null))),
               child: screenutilBuilder(
                 child: UrlForm(onSuccess: onSuccess),
               ),
@@ -135,7 +136,7 @@ void main() {
       });
 
       testWidgets('server response is not 200 OK', (WidgetTester tester) async {
-        CreateUrlResponse response;
+        CreateUrlResponse? response;
         await tester.pumpWidget(createForm(
           mockClientHandler: (r) async => Response('BAD', 400),
           onSuccess: (r) => response = r,
@@ -166,7 +167,7 @@ void main() {
           (WidgetTester tester) async {
         const exceptionText = 'Unexpected!Ex';
         await tester.pumpWidget(createForm(
-          mockClientHandler: (r) async => throw Exception(exceptionText),
+          mockClientHandler: ((r) async => throw Exception(exceptionText)),
         ));
 
         await tester.enterText(
@@ -189,8 +190,7 @@ void main() {
     });
 
     group('succeeds', () {
-      void testInputSucceeds(
-          {@required String input, @required String output}) {
+      void testInputSucceeds({required String input, required String output}) {
         Future<Response> createUrlHandler(Request r) async {
           final dynamic req = jsonDecode(r.body);
           final u = Uri.parse(req['url'].toString());
@@ -199,7 +199,7 @@ void main() {
         }
 
         testWidgets('for $input', (WidgetTester tester) async {
-          CreateUrlResponse response;
+          late CreateUrlResponse response;
           await tester.pumpWidget(createForm(
             mockClientHandler: createUrlHandler,
             onSuccess: (r) => response = r,

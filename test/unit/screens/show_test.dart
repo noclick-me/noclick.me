@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodCall, SystemChannels;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:noclick_me/screenutil_builder.dart' show screenutilBuilder;
@@ -8,8 +9,12 @@ import 'package:noclick_me/screenutil_builder.dart' show screenutilBuilder;
 import 'package:noclick_me/net.dart' show CreateUrlResponse, RateLimitInfo;
 import 'package:noclick_me/screens/show.dart';
 
-class MockNavigatorObserver extends Mock implements NavigatorObserver {}
+import 'show_test.mocks.dart';
 
+// TODO: remove returnNullOnMissingStub
+@GenerateMocks([], customMocks: [
+  MockSpec<NavigatorObserver>(returnNullOnMissingStub: true),
+])
 void main() {
   group('ShowUrlScreen', () {
     const mockUrl =
@@ -24,10 +29,6 @@ void main() {
     );
 
     setUp(() => reset(mockNavigatorObserver));
-
-    test('Constructor asserts on null response', () {
-      expect(() => ShowUrlScreen(null), throwsAssertionError);
-    });
 
     testWidgets('shows the URL (and only the URL if there is no rate limit',
         (WidgetTester tester) async {
@@ -61,7 +62,7 @@ void main() {
     testWidgets('COPY copies the URL to the clipboard',
         (WidgetTester tester) async {
       // Mock the clipboard service
-      var clipboardData = <String, dynamic>{
+      Map<String, dynamic>? clipboardData = <String, dynamic>{
         'text': null,
       };
       Future<dynamic> handler(MethodCall methodCall) async {
@@ -69,7 +70,7 @@ void main() {
           case 'Clipboard.getData':
             return clipboardData;
           case 'Clipboard.setData':
-            clipboardData = methodCall.arguments as Map<String, dynamic>;
+            clipboardData = methodCall.arguments as Map<String, dynamic>?;
             break;
         }
       }
@@ -83,7 +84,7 @@ void main() {
 
       await tester.tap(copyButtonFinder);
       await tester.pump();
-      expect(clipboardData['text'], mockUrl);
+      expect(clipboardData!['text'], mockUrl);
       verifyNever(mockNavigatorObserver.didPop(any, any));
     });
 

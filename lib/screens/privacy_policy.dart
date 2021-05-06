@@ -4,7 +4,7 @@ import '../markdown_asset.dart' show MarkdownAsset;
 
 /// Shows a Privacy Policy Screen.
 class PrivacyPolicyScreen extends StatelessWidget {
-  const PrivacyPolicyScreen({Key key}) : super(key: key);
+  const PrivacyPolicyScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

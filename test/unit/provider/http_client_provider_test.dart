@@ -6,23 +6,7 @@ import 'package:noclick_me/provider/http_client_provider.dart';
 
 void main() {
   group('HttpClientProvider', () {
-    final mockClient = MockClient((r) => null);
-
-    testWidgets('constructor asserts on null required parameters',
-        (WidgetTester tester) async {
-      expect(
-        () => HttpClientProvider(client: null, child: Container()),
-        throwsAssertionError,
-      );
-      expect(
-        () => HttpClientProvider(child: null, client: mockClient),
-        throwsAssertionError,
-      );
-      expect(
-        () => HttpClientProvider(child: null, client: null),
-        throwsAssertionError,
-      );
-    });
+    final mockClient = MockClient(((r) => Future.value(null)));
 
     testWidgets('child is built when pumped', (WidgetTester tester) async {
       final key = GlobalKey(debugLabel: 'childKey');
@@ -40,7 +24,7 @@ void main() {
       final provider = HttpClientProvider(
         client: mockClient,
         child: Builder(builder: (context) {
-          expect(HttpClientProvider.of(context).client, same(mockClient));
+          expect(HttpClientProvider.of(context)!.client, same(mockClient));
           return Container();
         }),
       );

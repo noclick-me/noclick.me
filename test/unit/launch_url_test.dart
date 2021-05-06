@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart'
     show MockPlatformInterfaceMixin;
@@ -8,14 +9,20 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 
 import 'package:noclick_me/launch_url.dart';
 
-class MockUrlLauncher extends Mock
-    with MockPlatformInterfaceMixin
-    implements UrlLauncherPlatform {}
+import 'launch_url_test.mocks.dart';
 
+class MockUrlLauncherPlatform extends MockUrlLauncherPlatformBase
+    with MockPlatformInterfaceMixin {}
+
+// TODO: remove returnNullOnMissingStub
+@GenerateMocks([], customMocks: [
+  MockSpec<UrlLauncherPlatform>(
+      as: #MockUrlLauncherPlatformBase, returnNullOnMissingStub: true),
+])
 void main() {
   group('launchUrl()', () {
     // Mock the url_launcher service
-    final mockLauncher = MockUrlLauncher();
+    final mockLauncher = MockUrlLauncherPlatform();
     final oldInstance = UrlLauncherPlatform.instance;
     UrlLauncherPlatform.instance = mockLauncher;
 
@@ -156,7 +163,7 @@ void main() {
         headers: anyNamed('headers'),
         universalLinksOnly: anyNamed('universalLinksOnly'),
         webOnlyWindowName: anyNamed('webOnlyWindowName'),
-      )).thenAnswer((_) async => throw Exception('LaunchException'));
+      )).thenAnswer(((_) async => throw Exception('LaunchException')));
       await tester.tap(buttonFinder);
       await tester.pump();
       verify(mockLauncher.canLaunch(mockUrl)).called(1);
