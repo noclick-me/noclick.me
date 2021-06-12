@@ -12,8 +12,11 @@ import 'show.dart' show ShowUrlScreen;
 import 'privacy_policy.dart' show PrivacyPolicyScreen;
 
 // TODO: Put all these resources in a common place
+const CONTACT_LINK = 'mailto:contact@noclick.me';
 const SPONSOR_LINK =
     'https://github.com/llucax/llucax/blob/main/sponsoring-platforms.md';
+const TWITTER_LINK = 'https://twitter.com/noclick_me';
+const GITHUB_LINK = 'https://github.com/noclick-me/noclick.me';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -110,12 +113,40 @@ class Home extends StatelessWidget {
                         children: <Widget>[
                           TextButton(
                             child: SvgPicture.asset(
+                              'assets/icons/contact.svg',
+                              semanticsLabel: 'E-Mail us',
+                              color: Colors.black,
+                              height: 20,
+                            ),
+                            onPressed: () => launchUrl(CONTACT_LINK, context,
+                                forceWebView: false),
+                          ),
+                          TextButton(
+                            child: SvgPicture.asset(
+                              'assets/icons/twitter.svg',
+                              semanticsLabel: 'Go to our twitter account',
+                              color: Colors.black,
+                              height: 20,
+                            ),
+                            onPressed: () => launchUrl(TWITTER_LINK, context),
+                          ),
+                          TextButton(
+                            child: SvgPicture.asset(
                               'assets/icons/sponsor.svg',
                               semanticsLabel: 'Sponsor this project',
                               color: Colors.black,
                               height: 20,
                             ),
                             onPressed: () => launchUrl(SPONSOR_LINK, context),
+                          ),
+                          TextButton(
+                            child: SvgPicture.asset(
+                              'assets/icons/github.svg',
+                              semanticsLabel: 'Visit this project on GitHub',
+                              color: Colors.black,
+                              height: 20,
+                            ),
+                            onPressed: () => launchUrl(GITHUB_LINK, context),
                           ),
                         ],
                       ),
