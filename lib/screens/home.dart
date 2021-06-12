@@ -2,12 +2,18 @@ import 'dart:math' show max, min;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 
+import '../launch_url.dart' show launchUrl;
 import '../logo.dart' show Logo;
 import '../markdown_asset.dart' show MarkdownAsset;
 import '../url_form.dart' show UrlForm;
 import 'show.dart' show ShowUrlScreen;
 import 'privacy_policy.dart' show PrivacyPolicyScreen;
+
+// TODO: Put all these resources in a common place
+const SPONSOR_LINK =
+    'https://github.com/llucax/llucax/blob/main/sponsoring-platforms.md';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -97,12 +103,21 @@ class Home extends StatelessWidget {
                     // MouseRegion is just a hack to get a nice mouse
                     // pointer until this issue is fixed:
                     // https://github.com/flutter/flutter_markdown/issues/233
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: MarkdownAsset(
-                        location: 'doc/sponsoring-badges.md',
-                        textAlign: WrapAlignment.center,
-                        standalone: false,
+                    child: SizedBox(
+                      height: 20,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        children: <Widget>[
+                          TextButton(
+                            child: SvgPicture.asset(
+                              'assets/icons/sponsor.svg',
+                              semanticsLabel: 'Sponsor this project',
+                              color: Colors.black,
+                              height: 20,
+                            ),
+                            onPressed: () => launchUrl(SPONSOR_LINK, context),
+                          ),
+                        ],
                       ),
                     ),
                   ),

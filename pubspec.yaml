@@ -16,6 +16,7 @@ dependencies:
   flutter_markdown: ^0.6.1
   flutter_linkify: ^5.0.2
   flutter_screenutil: ^5.0.0
+  flutter_svg: ^0.22.0
   http: ^0.13.2
   url_launcher: ^6.0.3
 
@@ -33,11 +34,10 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/badges/
+    - assets/icons/
     - assets/noclick.png
     - doc/legal/privacy.md
     - doc/sponsoring.md
-    - doc/sponsoring-badges.md
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
