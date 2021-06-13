@@ -12,6 +12,8 @@ import 'package:noclick_me/provider/http_client_provider.dart'
 import 'package:noclick_me/screens/show.dart' show ShowUrlScreen;
 import 'package:noclick_me/screens/privacy_policy.dart'
     show PrivacyPolicyScreen;
+import 'package:noclick_me/screens/terms_and_conditions.dart'
+    show TermsAndConditionsScreen;
 import 'package:noclick_me/screenutil_builder.dart' show screenutilBuilder;
 import 'package:noclick_me/url_form.dart' show UrlForm;
 
@@ -75,6 +77,18 @@ void main() {
       await tester.pumpAndSettle();
       verify(mockNavigatorObserver.didPush(any, any)).called(1);
       expect(find.byType(PrivacyPolicyScreen), findsOneWidget);
+    });
+
+    testWidgets('shows terms and conditions screen',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createHomeScreen());
+      final privacyPolicyButton = find.text('Terms and Conditions');
+
+      clearInteractions(mockNavigatorObserver);
+      await tester.tap(privacyPolicyButton);
+      await tester.pumpAndSettle();
+      verify(mockNavigatorObserver.didPush(any, any)).called(1);
+      expect(find.byType(TermsAndConditionsScreen), findsOneWidget);
     });
 
     testWidgets('shows licenses screen', (WidgetTester tester) async {

@@ -10,6 +10,7 @@ import '../markdown_asset.dart' show MarkdownAsset;
 import '../url_form.dart' show UrlForm;
 import 'show.dart' show ShowUrlScreen;
 import 'privacy_policy.dart' show PrivacyPolicyScreen;
+import 'terms_and_conditions.dart' show TermsAndConditionsScreen;
 
 // TODO: Put all these resources in a common place
 const CONTACT_LINK = 'mailto:contact@noclick.me';
@@ -157,6 +158,16 @@ class Home extends StatelessWidget {
                     child: Wrap(
                       alignment: WrapAlignment.center,
                       children: <Widget>[
+                        TextButton(
+                          child: const Text('Terms and Conditions'),
+                          onPressed: () => Navigator.push<ShowUrlScreen>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TermsAndConditionsScreen(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: max(12.0, min(27.0, 0.02.sw))),
                         TextButton(
                           child: const Text('Privacy Policy'),
                           onPressed: () => Navigator.push<ShowUrlScreen>(

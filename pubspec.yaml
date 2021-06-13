@@ -37,6 +37,7 @@ flutter:
     - assets/icons/
     - assets/noclick.png
     - doc/legal/privacy.md
+    - doc/legal/terms.md
     - doc/sponsoring.md
 
   # An image asset can refer to one or more resolution-specific "variants", see
