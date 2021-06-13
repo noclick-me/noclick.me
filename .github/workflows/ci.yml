@@ -133,7 +133,7 @@ jobs:
         TARGET=${{ matrix.target }}
         flutter build $TARGET --release
         mkdir -p artifacts
-        mv build/linux/release/bundle artifacts/$TARGET
+        mv build/linux/x64/release/bundle artifacts/$TARGET
 
     - name: Build web
       if: matrix.target == 'web'
